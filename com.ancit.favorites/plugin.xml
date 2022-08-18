@@ -71,7 +71,7 @@
            enablesFor="+"
            id="com.ancit.favorites.addToFavorites"
            label="Add"
-           menubarPath="com.ancit.favorites.popupSubMenu/content">
+           menubarPath="com.ancit.favorites.compilationUnitEditorPopupSubMenu/content">
 		      <enablement>
 		         <and>
 		            <objectClass
@@ -114,6 +114,26 @@
            tooltip="Add selected member&apos;s compilation unit to the Favorites view">
      </action>
   </viewerContribution>
+  <viewerContribution
+        id="com.ancit.favorites.compilationUnitEditorPopup"
+        targetID="#CompilationUnitEditorContext">
+     <menu
+           id="com.ancit.favorites.compilationUnitEditorPopup SubMenu"
+           label="Favorites"
+           path="additions">
+        <groupMarker
+              name="content">
+        </groupMarker>
+        <separator
+              name="additions">
+        </separator>
+     </menu>
+     <action
+           class="com.ancit.favorites.Action3"
+           id="com.ancit.favorites.addToFavoritesInCompilationUnitEditor"
+           label="Add">
+     </action>
+  </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -142,6 +162,31 @@
             </separator>
          </menu>
       </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="com.ancit.favorites.compilationUnitEditorActions"
+            targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
+         <menu
+               id="com.ancit.favorites.compilationUnitEditorPopupSubMenu"
+               label="Favorites"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+         <action
+               class="com.ancit.favorites.views.AddToFavoritesEditorActionDelegate"
+               id="com.ancit.favorites.addToFavoritesInCompilationUnitEditor"
+               label="Add"
+               menubarPath="com.ancit.favorites.compilationUnitEditorPopupSubMenu/content"
+               style="push">
+         </action>
+      </editorContribution>
    </extension>
 
 </plugin>
