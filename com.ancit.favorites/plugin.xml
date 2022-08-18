@@ -212,5 +212,26 @@
             sequence="Ctrl+Shift+A">
       </key>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.contentTypes">
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="com.ancit.favorites.editors.SampleFormEditor"
+            contributorClass="com.ancit.favorites.editors.PropertiesEditorContributor"
+            default="true"
+            extensions="properties"
+            icon="icons/sample.gif"
+            id="com.ancit.favorites.editors.PropertiesEditor"
+            name="Properties Editor">
+      </editor>
+      <editor
+            class="com.ancit.favorites.editors.SampleFormEditor"
+            default="true"
+            id="com.ancit.favorites.sampleformeditoe"
+            name="SampleFormEditor">
+      </editor>
+   </extension>
 
 </plugin>
