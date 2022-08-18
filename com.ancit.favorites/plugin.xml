@@ -181,12 +181,36 @@
          </menu>
          <action
                class="com.ancit.favorites.views.AddToFavoritesEditorActionDelegate"
+               definitionId="com.ancit.favorites.commands.addToFavoritesView"
                id="com.ancit.favorites.addToFavoritesInCompilationUnitEditor"
                label="Add"
                menubarPath="com.ancit.favorites.compilationUnitEditorPopupSubMenu/content"
                style="push">
          </action>
       </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="Favorites Commands"
+            id="com.ancit.favorites.commands"
+            name="Favorites">
+      </category>
+      <command
+            category="com.ancit.favorites.commands"
+            description="Add the selection to the Favorites"
+            id="com.ancit.favorites.commands.addToFavoritesView"
+            name="Add to Favorites View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="com.ancit.favorites.commands.addToFavoritesView"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+Shift+A">
+      </key>
    </extension>
 
 </plugin>
