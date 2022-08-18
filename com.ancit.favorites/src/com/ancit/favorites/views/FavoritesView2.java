@@ -26,9 +26,13 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -42,9 +46,11 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
@@ -53,10 +59,12 @@ import com.ancit.favorites.helpers.FavoritesManager;
 import com.ancit.favorites.helpers.FavoritesViewContentProvider;
 import com.ancit.favorites.helpers.FavoritesViewSorter;
 import com.ancit.favorites.helpers.IFavoriteItem;
+import com.ancit.favorites.views.action.AutoResizeTableLayout;
 import com.ancit.favorites.views.action.CopyFavoritesAction;
 import com.ancit.favorites.views.action.FavoritesDragSource;
 import com.ancit.favorites.views.action.FavoritesDropTarget;
 import com.ancit.favorites.views.action.FavoritesViewFilterAction;
+import com.ancit.favorites.views.action.OpenEditorActionDelegate;
 import com.ancit.favorites.views.action.RemoveFavoritesAction;
 import com.ancit.favorites.views.action.RenameFavoriteAction;
 
@@ -85,6 +93,8 @@ public class FavoritesView2 extends ViewPart {
 
 	@Inject
 	IWorkbench workbench;
+
+	private ISelectionListener pageSelectionListener;
 
 	private TableColumn typeColumn;
 	private TableColumn nameColumn;
@@ -121,18 +131,23 @@ public class FavoritesView2 extends ViewPart {
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		final Table table = viewer.getTable();
+		AutoResizeTableLayout layout = new AutoResizeTableLayout(table);
+		table.setLayout(layout);
 
 		typeColumn = new TableColumn(table, SWT.LEFT);
 		typeColumn.setText("");
-		typeColumn.setWidth(18);
+//		typeColumn.setWidth(18);
+		layout.addColumnData(new ColumnPixelData(18));
 
 		nameColumn = new TableColumn(table, SWT.LEFT);
 		nameColumn.setText("Name");
-		nameColumn.setWidth(200);
+//		nameColumn.setWidth(200);
+		layout.addColumnData(new ColumnWeightData(200));
 
 		locationColumn = new TableColumn(table, SWT.LEFT);
 		locationColumn.setText("Location");
-		locationColumn.setWidth(450);
+//		locationColumn.setWidth(450);
+		layout.addColumnData(new ColumnWeightData(200));
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(false);
@@ -157,6 +172,7 @@ public class FavoritesView2 extends ViewPart {
 		hookGlobalActions();
 		hookDragAndDrop();
 		hookMouse();
+		hookPageSelection();
 	}
 
 	private void hookContextMenu() {
@@ -358,13 +374,37 @@ public class FavoritesView2 extends ViewPart {
 					renameAction.run();
 				}
 			}
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				OpenEditorActionDelegate.openEditor(getSite().getPage(), viewer.getSelection());
+			}
 		});
+	}
+
+	private void hookPageSelection() {
+		pageSelectionListener = this::pageSelectionChanged;
+		getSite().getPage().addPostSelectionListener(pageSelectionListener);
+	}
+
+	protected void pageSelectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (part == this || !(selection instanceof IStructuredSelection)) {
+			return;
+		}
+		IStructuredSelection sel = (IStructuredSelection) selection;
+		IFavoriteItem[] items = FavoritesManager.getManager().existingFavoritesFor(sel.iterator());
+		if (items.length > 0) {
+			viewer.setSelection(new StructuredSelection(items), true);
+		}
 	}
 
 	@Override
 	public void dispose() {
 		if (clipboard != null) {
 			clipboard.dispose();
+		}
+		if (pageSelectionListener != null) {
+			getSite().getPage().removePostSelectionListener(pageSelectionListener);
 		}
 		super.dispose();
 	}
