@@ -61,5 +61,40 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+		<objectContribution
+		      objectClass="java.lang.Object"
+		      id="com.ancit.favorites.popupMenu">
+		   <action
+		         label="Add"
+		         tooltip="Add the selected resource(s)
+		                  to the Favorites view"
+		         class="com.qualityeclipse.favorites.actions.
+		                AddToFavoritesActionDelegate"
+		         menubarPath="com.ancit.favorites.popupSubMenu/content"
+		         enablesFor="+"
+		         id="com.ancit.favorites.addToFavorites">
+		      <enablement>
+		         <and>
+		            <objectClass
+		               name="org.eclipse.core.resources.IResource"/>
+		             <objectState name="name" value="*.java"/>
+		         </and>
+		      </enablement>
+		   </action>
+     <menu
+           id="com.ancit.favorites.popupSubMenu"
+           label="Favorites"
+           path="additions">
+        <groupMarker
+              name="content">
+        </groupMarker>
+        <separator
+              name="additions">
+        </separator>
+     </menu>
+		</objectContribution>
+   </extension>
 
 </plugin>
