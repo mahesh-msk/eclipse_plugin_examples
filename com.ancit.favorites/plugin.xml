@@ -35,5 +35,31 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="com.ancit.favorites.workbenchActionSet"
+            label="Favorites ActionSet"
+            visible="true">
+         <menu
+               id="com.ancit.favorites.workbenchMenu"
+               label="Fa&amp;vorites"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+         </menu>
+         <action
+               class="com.ancit.favorites.views.OpenFavoritesViewActionDelegate"
+               icon="icons/sample.png"
+               id="com.ancit.favorites.openFavoritesView"
+               label="Open Favo&amp;rites View"
+               menubarPath="com.ancit.favorites.workbenchMenu/content"
+               style="push"
+               toolbarPath="Normal/additions"
+               tooltip="Open the favorites view in the current workbench page">
+         </action>
+      </actionSet>
+   </extension>
 
 </plugin>
