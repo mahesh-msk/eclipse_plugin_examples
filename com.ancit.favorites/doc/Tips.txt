@@ -1,0 +1,119 @@
+6.4.8. View context menu identifiers
+
+The context menu identifiers for some Eclipse views follow. For more information on how this list was generated, see Section 20.6, Modifying Eclipse to Find Part Identifiers, on page 727.
+
+Ant
+
+id = org.eclipse.ant.ui.views.AntView
+menuId = org.eclipse.ant.ui.views.AntView
+
+
+Bookmarks
+
+id = org.eclipse.ui.views.BookmarkView
+menuId = org.eclipse.ui.views.BookmarkView
+
+
+Breakpoints
+
+id = org.eclipse.debug.ui.BreakpointView
+menuId = org.eclipse.debug.ui.BreakpointView
+
+
+Console
+
+id = org.eclipse.ui.console.ConsoleView
+menuId = org.eclipse.ui.console.ConsoleView
+
+
+Debug
+
+id = org.eclipse.debug.ui.DebugView
+menuId = org.eclipse.debug.ui.DebugView
+
+
+Display
+
+id = org.eclipse.jdt.debug.ui.DisplayView
+menuId = org.eclipse.jdt.debug.ui.DisplayView
+
+
+Expressions
+
+id = org.eclipse.debug.ui.ExpressionView
+menuId = org.eclipse.debug.ui.VariableView.detail
+menuId = org.eclipse.debug.ui.ExpressionView
+
+
+Members
+
+id = org.eclipse.jdt.ui.MembersView
+menuId = org.eclipse.jdt.ui.MembersView
+
+
+Memory
+
+id = org.eclipse.debug.ui.MemoryView
+menuId = org.eclipse.debug.ui.MemoryView.MemoryBlocksTreeViewPane
+
+
+Navigator
+
+id = org.eclipse.ui.views.ResourceNavigator
+menuId = org.eclipse.ui.views.ResourceNavigator
+
+
+Package Explorer
+
+id = org.eclipse.jdt.ui.PackageExplorer
+menuId = org.eclipse.jdt.ui.PackageExplorer
+
+
+Packages
+
+id = org.eclipse.jdt.ui.PackagesView
+menuId = org.eclipse.jdt.ui.PackagesView
+
+
+Problems
+
+id = org.eclipse.ui.views.ProblemView
+menuId = org.eclipse.ui.views.ProblemView
+
+
+Projects
+
+id = org.eclipse.jdt.ui.ProjectsView
+menuId = org.eclipse.jdt.ui.ProjectsView
+
+
+Registers
+
+id = org.eclipse.debug.ui.RegisterView
+menuId = org.eclipse.debug.ui.VariableView.detail
+menuId = org.eclipse.debug.ui.RegisterView
+
+
+Tasks
+
+id = org.eclipse.ui.views.TaskList
+menuId = org.eclipse.ui.views.TaskList
+
+
+Threads and Monitors
+
+id = org.eclipse.jdt.debug.ui.MonitorsView
+menuId = org.eclipse.jdt.debug.ui.MonitorsView
+
+
+Types
+
+id = org.eclipse.jdt.ui.TypesView
+menuId = org.eclipse.jdt.ui.TypesView
+
+
+Variables
+
+id = org.eclipse.debug.ui.VariableView
+menuId = org.eclipse.debug.ui.VariableView.detail
+menuId = org.eclipse.debug.ui.VariableView

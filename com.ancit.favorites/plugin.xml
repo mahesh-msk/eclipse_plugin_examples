@@ -67,14 +67,11 @@
 		      objectClass="java.lang.Object"
 		      id="com.ancit.favorites.popupMenu">
 		   <action
-		         label="Add"
-		         tooltip="Add the selected resource(s)
-		                  to the Favorites view"
-		         class="com.qualityeclipse.favorites.actions.
-		                AddToFavoritesActionDelegate"
-		         menubarPath="com.ancit.favorites.popupSubMenu/content"
-		         enablesFor="+"
-		         id="com.ancit.favorites.addToFavorites">
+           class="com.ancit.favorites.views.OpenFavoritesViewActionDelegate"
+           enablesFor="+"
+           id="com.ancit.favorites.addToFavorites"
+           label="Add"
+           menubarPath="com.ancit.favorites.popupSubMenu/content">
 		      <enablement>
 		         <and>
 		            <objectClass
@@ -95,6 +92,56 @@
         </separator>
      </menu>
 		</objectContribution>
+  <viewerContribution
+        id="com.ancit.favorites.membersViewPopup"
+        targetID="org.eclipse.jdt.ui.MembersView">
+     <menu
+           id="com.ancit.favorites.membersViewPopupSubMenu"
+           label="Favorites"
+           path="additions">
+        <groupMarker
+              name="content">
+        </groupMarker>
+        <separator
+              name="additions">
+        </separator>
+     </menu>
+     <action
+           class="com.ancit.favorites.views.AddToFavoritesActionDelegate"
+           id="com.ancit.favorites.addToFavoritesInMembersView"
+           label="Add"
+           menubarPath="com.ancit.favorites.membersViewPopup SubMenu/content"
+           tooltip="Add selected member&apos;s compilation unit to the Favorites view">
+     </action>
+  </viewerContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="com.ancit.favorites.membersViewActions"
+            targetID="org.eclipse.jdt.ui.MembersView">
+         <action
+               class="com.ancit.favorites.views.AddToFavoritesActionDelegate"
+               icon="icons/sample.png"
+               id="com.ancit.favorites.addToFavoritesInMembersView"
+               label="Add"
+               menubarPath="com.ancit.favorites.membersViewPulldownSubMenu/content"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Add the selected items in the Members view to the Favorites view">
+         </action>
+         <menu
+               id="com.ancit.favorites.membersViewPulldownSubMenu"
+               label="Favorites"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+      </viewContribution>
    </extension>
 
 </plugin>
