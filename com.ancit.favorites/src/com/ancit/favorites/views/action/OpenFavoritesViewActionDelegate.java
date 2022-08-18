@@ -1,4 +1,4 @@
-package com.ancit.favorites.views;
+package com.ancit.favorites.views.action;
 
 /*
  * FILE:            OpenFavoritesViewActionDelegate.java
@@ -21,6 +21,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
+
+import com.ancit.favorites.views.FavoritesView2;
 
 /*
  * FILE:            OpenFavoritesViewActionDelegate.java
@@ -56,7 +58,7 @@ public class OpenFavoritesViewActionDelegate implements IWorkbenchWindowActionDe
 
 		// Open and activate the Favorites view.
 		try {
-			page.showView(FavoritesView.ID);
+			page.showView(FavoritesView2.ID);
 		} catch (PartInitException e) {
 			System.err.println("Failed to open the Favorites view");
 		}

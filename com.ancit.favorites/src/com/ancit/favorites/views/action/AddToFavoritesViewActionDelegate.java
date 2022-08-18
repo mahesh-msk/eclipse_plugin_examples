@@ -1,5 +1,5 @@
 /*
- * FILE:            AddToFavoritesActionDelegate.java
+ * FILE:            AddToFavoritesViewActionDelegate.java
  *
  * SW-COMPONENT:    com.ancit.favorites
  *
@@ -13,15 +13,16 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.views;
+package com.ancit.favorites.views.action;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class AddToFavoritesActionDelegate implements IObjectActionDelegate {
+public class AddToFavoritesViewActionDelegate implements IViewActionDelegate {
 
 	private IWorkbenchPart targetPart;
 
@@ -39,8 +40,8 @@ public class AddToFavoritesActionDelegate implements IObjectActionDelegate {
 	}
 
 	@Override
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		this.targetPart = targetPart;
+	public void init(IViewPart view) {
+		this.targetPart = view;
 
 	}
 
