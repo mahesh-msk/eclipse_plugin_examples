@@ -11,3 +11,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: com.ancit.favorites
 Import-Package: javax.inject
 Bundle-ActivationPolicy: lazy
+Export-Package: com.ancit.favorites.views
