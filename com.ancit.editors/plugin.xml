@@ -22,7 +22,7 @@
            restorable="true">
      </view>
      <view
-           class="com.ancit.editors.views.view.DeptListView"
+           class="com.ancit.editors.view.DeptListView"
            id="view.deptList"
            name="Dept List"
            restorable="true">
@@ -40,10 +40,11 @@
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">
          <view
+               id="com.ancit.editors.views.FormView"
                ratio="0.5"
-               relative="org.eclipse.ui.views.TaskList"
                relationship="right"
-               id="com.ancit.editors.views.FormView">
+               relative="org.eclipse.ui.views.TaskList"
+               visible="true">
          </view>
       </perspectiveExtension>
    </extension>
@@ -159,34 +160,31 @@
            </command>
         </menu>
      </menuContribution>
-  </extension> 
-    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="Eclipse Form Article"
-            id="com.ancit.editors.actionSet">
-         <menu
-               label="Form Article Editor"
-               id="com.ancit.editors.menu">
-            <groupMarker
-                  name="group">
-            </groupMarker>
-         </menu>
-         <action
-               label="Simple Form Editor"
-               class="com.ancit.editors.OpenFormEditorAction"
-               menubarPath="com.ancit.editors.menu/group"
-               id="com.ancit.editors.simple">
-         </action>
-      </actionSet>
-   </extension> 
-  <!--<extension
-        point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
-     <hyperlinkDetector
-           activate="true"
-           class="com.ancit.editors.hyperlink.AncitHyperlinkDetector"
-           id="com.ancit.editors.hyperlinkDetector1"
-           name="Ancit Decorative HyperLink">
-     </hyperlinkDetector>
-  </extension>  -->  
+  </extension>
+	  <extension
+	     point="org.eclipse.ui.actionSets">
+		  <actionSet
+		        id="com.ancit.editors.workbenchActionSet"
+		        label="Eclipse Form Article"
+		        visible="true">
+		     <menu
+		           id="com.ancit.editors.workbenchMenu"
+		           label="F&amp;orm Article Editor"
+		           path="additions">
+		        <groupMarker
+		              name="content">
+		        </groupMarker>
+		     </menu>
+		     <action
+		           class="com.ancit.editors.OpenFormEditorAction"
+		           icon="icons/sample.png"
+		           id="com.ancit.favorites.openFormEditor"
+		           label="Simple For&amp;m Editor"
+		           menubarPath="com.ancit.editors.workbenchMenu/content"
+		           style="push"
+		           toolbarPath="Normal/additions"
+		           tooltip="Open the Form editor in the current workbench page">
+		     </action>
+		  </actionSet>
+	   </extension>
 </plugin>
