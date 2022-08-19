@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.TextActionHandler;
 
-import com.ancit.favorites.helpers.IFavoriteItem;
+import com.ancit.favorite.model.IFavoriteItem;
 import com.ancit.favorites.views.FavoritesView2;
 
 public class RenameFavoriteAction extends Action {

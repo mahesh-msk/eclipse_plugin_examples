@@ -10,11 +10,17 @@
       </category>
       <view
             id="com.ancit.favorites.views.FavoritesView2"
-            name="favorites View"
+            name="Favorites2 View"
             icon="icons/sample.png"
             class="com.ancit.favorites.views.FavoritesView2"
             category="com.ancit.favorites"
             inject="true">
+      </view>
+      <view
+            class="com.ancit.favorites.views.FavoritesView"
+            id="com.ancit.favorites.views.FavoritesView"
+            name="Favorites View"
+            restorable="true">
       </view>
    </extension>
    <extension
@@ -27,6 +33,19 @@
                relationship="right"
                ratio="0.5">
          </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="com.ancit.favorites.FavoritesPerspective">
+         <view
+               closeable="false"
+               id="com.ancit.favorites.views.FavoritesView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+         <viewShortcut
+               id="com.ancit.favorites.views.FavoritesView">
+         </viewShortcut>
       </perspectiveExtension>
    </extension>
    <extension
@@ -212,26 +231,87 @@
             sequence="Ctrl+Shift+A">
       </key>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.contentTypes">
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="com.ancit.favorites.editors.SampleFormEditor"
-            contributorClass="com.ancit.favorites.editors.PropertiesEditorContributor"
-            default="true"
-            extensions="properties"
-            icon="icons/sample.gif"
-            id="com.ancit.favorites.editors.PropertiesEditor"
-            name="Properties Editor">
-      </editor>
-      <editor
-            class="com.ancit.favorites.editors.SampleFormEditor"
-            default="true"
-            id="com.ancit.favorites.sampleformeditoe"
-            name="SampleFormEditor">
-      </editor>
-   </extension>
-
+	<extension
+	   id="auditmarker"
+	   point="org.eclipse.core.resources.markers"
+	   name="Properties Auditor Marker">
+	   <super type="org.eclipse.core.resources.problemmarker"/>
+	   <super type="org.eclipse.core.resources.textmarker"/>
+	   <attribute name="key"/>
+	   <attribute name="violation"/>
+	   <persistent value="true"/>
+	</extension>
+	<extension point="org.eclipse.ui.ide.markerResolution">
+	   <markerResolutionGenerator
+	      markerType="com.qualityeclipse.favorites.auditmarker"
+	      class="com.ancit.favorites.builder.ViolationResolutionGenerator">
+	   </markerResolutionGenerator>
+	</extension>
+ <extension
+       id="propertiesFileAuditor"
+       point="org.eclipse.core.resources.builders">
+    <builder
+          hasNature="true">
+       <run
+             class="com.ancit.favorites.builders.PropertiesFileAuditor">
+       </run></builder>
+ </extension>
+ <extension
+       point="org.eclipse.ui.startup">
+    <startup
+          class="com.ancit.favorites.FavoritresStartup">
+    </startup>
+ </extension>
+ <extension
+       id="propertiesAuditor"
+       name="Favorites Properties Auditor"
+       point="org.eclipse.core.resources.natures">
+    <builder
+          id="com.ancit.favorites.propertiesFileAuditor">
+    </builder>
+    <runtime>
+       <run
+             class="com.ancit.favorites.builders.PropertiesAuditorNature">
+       </run>
+    </runtime>
+    <requires-nature id="org.eclipse.jdt.core.javanature"/>
+   <requires-nature id="org.eclipse.pde.PluginNature"/>
+ </extension>
+ <extension
+       point="org.eclipse.ui.perspectives">
+    <perspective
+          class="com.ancit.favorites.perspectives.FavoritesPerspectiveFactory"
+          icon="icons/sample.gif"
+          id="com.ancit.favorites.FavoritesPerspective"
+          name="Favorites">
+    </perspective>
+ </extension>
+ <extension
+       point="org.eclipse.ui.preferencePages">
+    <page
+          category="com.ancit.favorites.prefs.view"
+          class="com.ancit.favorites.preferences.FavoritesPreferencePage"
+          id="com.ancit.favorites.preferences.FavoritesPreferencePage"
+          name="Favorites Page">
+    </page>
+ </extension>
+ <extension
+       id="com.ancit.favorites.prefs.view"
+       name="Favorites"
+       point="org.eclipse.core.runtime.preferences">
+    <initializer
+          class="com.ancit.favorites.preferences.PreferenceInitializer">
+    </initializer>
+ </extension>
+ <extension
+       point="org.eclipse.ui.propertyPages">
+    <page
+          adaptable="false"
+          class="com.ancit.favorites.properties.FavoriteResourcePropertyPage"
+          icon="icons/sample.gif"
+          id="com.ancit.favorites.resourcePropertyPage"
+          name="Favorite Properties"
+          objectClass="org.eclipse.core.resources.IResource">
+    </page>
+ </extension>
 </plugin>

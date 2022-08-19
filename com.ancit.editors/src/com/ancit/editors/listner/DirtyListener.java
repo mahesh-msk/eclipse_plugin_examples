@@ -1,7 +1,7 @@
 /*
- * FILE:            IFavoriteItem.java
+ * FILE:            DirtyListener.java
  *
- * SW-COMPONENT:    com.ancit.favorites
+ * SW-COMPONENT:    com.ancit.editors
  *
  * DESCRIPTION:     -
  *
@@ -13,22 +13,9 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.helpers;
+package com.ancit.editors.listner;
 
-import org.eclipse.core.runtime.IAdaptable;
+public interface DirtyListener {
 
-public interface IFavoriteItem extends IAdaptable {
-	String getName();
-
-	void setName(String newName);
-
-	String getLocation();
-
-	boolean isFavoriteFor(Object obj);
-
-	FavoriteItemType getType();
-
-	String getInfo();
-
-	IFavoriteItem[] NONE = {};
+	void fireDirty();
 }

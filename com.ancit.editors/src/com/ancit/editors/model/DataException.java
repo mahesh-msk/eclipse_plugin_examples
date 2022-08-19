@@ -1,7 +1,7 @@
 /*
- * FILE:            SampleFormpage.java
+ * FILE:            DataException.java
  *
- * SW-COMPONENT:    com.ancit.favorites
+ * SW-COMPONENT:    com.ancit.editors
  *
  * DESCRIPTION:     -
  *
@@ -13,16 +13,13 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.editors;
+package com.ancit.editors.model;
 
-import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.FormPage;
+public class DataException extends Exception {
 
-public class SampleFormpage extends FormPage {
+	private static final long serialVersionUID = 7155764478659670087L;
 
-	public SampleFormpage(FormEditor editor, String id, String title) {
-		super(editor, id, title);
-		// TODO Auto-generated constructor stub
+	public DataException(String message) {
+		super(message);
 	}
-
 }

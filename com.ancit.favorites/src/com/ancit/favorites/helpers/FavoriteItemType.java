@@ -21,6 +21,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import com.ancit.favorite.model.IFavoriteItem;
+
 public abstract class FavoriteItemType implements Comparable {
 
 	private static final ISharedImages PLATFORM_IMAGES = PlatformUI.getWorkbench().getSharedImages();

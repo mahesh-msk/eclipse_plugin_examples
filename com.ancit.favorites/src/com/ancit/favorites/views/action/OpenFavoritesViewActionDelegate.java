@@ -1,5 +1,24 @@
+/*
+ * FILE:            OpenFavoritesViewActionDelegate.java
+ *
+ * SW-COMPONENT:    com.ancit.favorites
+ *
+ * DESCRIPTION:     -
+ *
+ * COPYRIGHT:       © 2015 - 2022 Robert Bosch GmbH
+ *
+ * The reproduction, distribution and utilization of this file as
+ * well as the communication of its contents to others without express
+ * authorization is prohibited. Offenders will be held liable for the
+ * payment of damages. All rights reserved in the event of the grant
+ * of a patent, utility model or design.
+ */
 package com.ancit.favorites.views.action;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 /*
  * FILE:            OpenFavoritesViewActionDelegate.java
  *
@@ -22,6 +41,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 
+import com.ancit.favorites.builders.PropertiesFileAuditor;
 import com.ancit.favorites.views.FavoritesView2;
 
 /*
@@ -51,6 +71,7 @@ public class OpenFavoritesViewActionDelegate implements IWorkbenchWindowActionDe
 			return;
 		}
 
+		PropertiesFileAuditor.addBuilderToProject(getProject());
 		IWorkbenchPage page = window.getActivePage();
 		if (page == null) {
 			return;
@@ -81,6 +102,14 @@ public class OpenFavoritesViewActionDelegate implements IWorkbenchWindowActionDe
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 
+	}
+
+	private IProject getProject() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		// Get all projects in the workspace
+		IProject[] projects = root.getProjects();
+		return projects[0];
 	}
 
 }

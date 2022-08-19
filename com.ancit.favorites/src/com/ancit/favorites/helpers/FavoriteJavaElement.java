@@ -24,6 +24,8 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+import com.ancit.favorite.model.IFavoriteItem;
+
 public class FavoriteJavaElement implements IFavoriteItem {
 	private FavoriteItemType type;
 	private IJavaElement element;

@@ -24,7 +24,7 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 
-import com.ancit.favorites.helpers.IFavoriteItem;
+import com.ancit.favorite.model.IFavoriteItem;
 import com.ancit.favorites.views.FavoritesView2;
 
 public class CopyFavoritesAction extends Action {

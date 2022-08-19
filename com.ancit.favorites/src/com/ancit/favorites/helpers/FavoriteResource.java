@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
+import com.ancit.favorite.model.IFavoriteItem;
+
 public class FavoriteResource implements IFavoriteItem {
 	private FavoriteItemType type;
 	private IResource resource;

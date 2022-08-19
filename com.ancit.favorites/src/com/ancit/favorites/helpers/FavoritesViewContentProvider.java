@@ -18,6 +18,7 @@ package com.ancit.favorites.helpers;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
 
 public class FavoritesViewContentProvider implements IStructuredContentProvider, FavoritesManagerListener {
 	private TableViewer viewer;
@@ -46,6 +47,18 @@ public class FavoritesViewContentProvider implements IStructuredContentProvider,
 
 	@Override
 	public void favoritesChanged(FavoritesManagerEvent event) {
+		// If this is the UI thread, then make the change.
+		if (Display.getCurrent() != null) {
+			updateViewer(event);
+		}
+
+		// otherwise, redirect to execute on the UI thread.
+		Display.getDefault().asyncExec(() -> updateViewer(event));
+	}
+
+	private void updateViewer(final FavoritesManagerEvent event) {
+		// Use the setRedraw method to reduce flicker
+		// when adding or removing multiple items in a table.
 		viewer.getTable().setRedraw(false);
 		try {
 			viewer.remove(event.getItemsRemoved());

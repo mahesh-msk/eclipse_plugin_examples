@@ -17,6 +17,8 @@ package com.ancit.favorites.helpers;
 
 import java.util.EventObject;
 
+import com.ancit.favorite.model.IFavoriteItem;
+
 public class FavoritesManagerEvent extends EventObject {
 	private static final long serialVersionUID = 3697053173951102953L;
 

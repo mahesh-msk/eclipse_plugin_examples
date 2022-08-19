@@ -26,8 +26,8 @@ import java.util.List;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
+import com.ancit.favorite.model.IFavoriteItem;
 import com.ancit.favorites.helpers.FavoritesManager;
-import com.ancit.favorites.helpers.IFavoriteItem;
 
 public class FavoritesTransfer extends ByteArrayTransfer {
 

@@ -20,25 +20,34 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ancit.favorites.helpers.FavoritesViewNameFilter;
+import com.ancit.bosch.filters.FavoritesViewLocationFilter;
+import com.ancit.bosch.filters.FavoritesViewNameFilter;
+import com.ancit.bosch.filters.FavoritesViewTypeFilter;
+import com.ancit.favorites.dialog.FavoritesFilterDialog;
 
 public class FavoritesViewFilterAction extends Action {
 	private final Shell shell;
 	private final FavoritesViewNameFilter nameFilter;
+	private final FavoritesViewLocationFilter locationFilter;
+	private final FavoritesViewTypeFilter typeFilter;
 
 	public FavoritesViewFilterAction(StructuredViewer viewer, String text) {
 		super(text);
 		shell = viewer.getControl().getShell();
 		nameFilter = new FavoritesViewNameFilter(viewer);
+		locationFilter = new FavoritesViewLocationFilter(viewer);
+		typeFilter = new FavoritesViewTypeFilter(viewer);
 	}
 
+	@Override
 	public void run() {
-		InputDialog dialog = new InputDialog(
-				shell, "Favorites View Filter", "Enter a name filter pattern" + " (* = any string, ? = any character)"
-						+ System.lineSeparator() + "or an empty string for no filtering:",
-				nameFilter.getPattern(), null);
-		if (dialog.open() == InputDialog.OK) {
-			nameFilter.setPattern(dialog.getValue().trim());
+		FavoritesFilterDialog dialog = new FavoritesFilterDialog(shell, nameFilter.getPattern(), typeFilter.getTypes(),
+				locationFilter.getPattern());
+		if (dialog.open() != InputDialog.OK) {
+			return;
 		}
+		nameFilter.setPattern(dialog.getNamePattern());
+		locationFilter.setPattern(dialog.getLocationPattern());
+		typeFilter.setPattern(dialog.getSelectedTypes().toString());
 	}
 }

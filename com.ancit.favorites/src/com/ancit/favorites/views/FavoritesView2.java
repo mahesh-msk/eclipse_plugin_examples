@@ -55,10 +55,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 
+import com.ancit.favorite.model.IFavoriteItem;
 import com.ancit.favorites.helpers.FavoritesManager;
 import com.ancit.favorites.helpers.FavoritesViewContentProvider;
 import com.ancit.favorites.helpers.FavoritesViewSorter;
-import com.ancit.favorites.helpers.IFavoriteItem;
 import com.ancit.favorites.views.action.AutoResizeTableLayout;
 import com.ancit.favorites.views.action.CopyFavoritesAction;
 import com.ancit.favorites.views.action.FavoritesDragSource;

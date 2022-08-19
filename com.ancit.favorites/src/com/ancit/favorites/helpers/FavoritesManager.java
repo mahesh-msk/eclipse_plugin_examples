@@ -23,13 +23,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
-public class FavoritesManager {
+import com.ancit.favorite.model.IFavoriteItem;
+
+public class FavoritesManager implements IResourceChangeListener {
 	private static FavoritesManager manager;
 	private Collection favorites;
 
 	private FavoritesManager() {
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	private List listeners = new ArrayList();
@@ -149,6 +156,61 @@ public class FavoritesManager {
 		if (favorites.removeAll(Arrays.asList(items))) {
 			fireFavoritesChanged(IFavoriteItem.NONE, items);
 		}
+	}
+
+	public static void shutdown() {
+		if (manager != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(manager);
+//			manager.saveFavorites();
+			manager = null;
+		}
+	}
+
+	@Override
+	public void resourceChanged(IResourceChangeEvent event) {
+		System.out.println("FavoritesManager - resource change event");
+		try {
+//			event.getDelta().accept(delta -> {
+//				StringBuffer buf = new StringBuffer(80);
+//				switch (delta.getKind()) {
+//				case IResourceDelta.ADDED:
+//					buf.append("ADDED");
+//					break;
+//				case IResourceDelta.REMOVED:
+//					buf.append("REMOVED");
+//					break;
+//				case IResourceDelta.CHANGED:
+//					buf.append("CHANGED");
+//					break;
+//				default:
+//					buf.append("[");
+//					buf.append(delta.getKind());
+//					buf.append("]");
+//					break;
+//				}
+//				buf.append(" ");
+//				buf.append(delta.getResource());
+//				System.out.println(buf);
+//				return true;
+//			});
+
+			Collection itemsToRemove = new HashSet();
+			event.getDelta().accept(delta -> {
+				if (delta.getKind() == IResourceDelta.REMOVED) {
+					IFavoriteItem item = existingFavoriteFor(delta.getResource());
+					if (item != null) {
+						itemsToRemove.add(item);
+					}
+				}
+				return true;
+			});
+			if (itemsToRemove.size() > 0) {
+				removeFavorites((IFavoriteItem[]) itemsToRemove.toArray(new IFavoriteItem[itemsToRemove.size()]));
+			}
+		} catch (CoreException ex) {
+			ex.printStackTrace();
+		}
+
 	}
 
 }

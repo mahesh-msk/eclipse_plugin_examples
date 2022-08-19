@@ -1,5 +1,5 @@
 /*
- * FILE:            FavoritesViewNameFilter.java
+ * FILE:            FavoritesViewLocationFilter.java
  *
  * SW-COMPONENT:    com.ancit.favorites
  *
@@ -13,24 +13,27 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.helpers;
+package com.ancit.bosch.filters;
 
 import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-public class FavoritesViewNameFilter extends ViewerFilter {
+import com.ancit.favorite.model.IFavoriteItem;
+import com.ancit.favorites.helpers.FavoriteItemType;
+
+public class FavoritesViewLocationFilter extends ViewerFilter {
 	private final StructuredViewer viewer;
 	private String pattern = "";
 	private StringMatcher matcher;
 
-	public FavoritesViewNameFilter(StructuredViewer viewer) {
+	public FavoritesViewLocationFilter(StructuredViewer viewer) {
 		this.viewer = viewer;
 	}
 
-	public String getPattern() {
-		return pattern;
+	public FavoriteItemType[] getPattern() {
+		return null;
 	}
 
 	public void setPattern(String newPattern) {
