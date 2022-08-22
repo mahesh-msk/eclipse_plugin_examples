@@ -231,51 +231,11 @@
             sequence="Ctrl+Shift+A">
       </key>
    </extension>
-	<extension
-	   id="auditmarker"
-	   point="org.eclipse.core.resources.markers"
-	   name="Properties Auditor Marker">
-	   <super type="org.eclipse.core.resources.problemmarker"/>
-	   <super type="org.eclipse.core.resources.textmarker"/>
-	   <attribute name="key"/>
-	   <attribute name="violation"/>
-	   <persistent value="true"/>
-	</extension>
-	<extension point="org.eclipse.ui.ide.markerResolution">
-	   <markerResolutionGenerator
-	      markerType="com.qualityeclipse.favorites.auditmarker"
-	      class="com.ancit.favorites.builder.ViolationResolutionGenerator">
-	   </markerResolutionGenerator>
-	</extension>
- <extension
-       id="propertiesFileAuditor"
-       point="org.eclipse.core.resources.builders">
-    <builder
-          hasNature="true">
-       <run
-             class="com.ancit.favorites.builders.PropertiesFileAuditor">
-       </run></builder>
- </extension>
  <extension
        point="org.eclipse.ui.startup">
     <startup
           class="com.ancit.favorites.FavoritresStartup">
     </startup>
- </extension>
- <extension
-       id="propertiesAuditor"
-       name="Favorites Properties Auditor"
-       point="org.eclipse.core.resources.natures">
-    <builder
-          id="com.ancit.favorites.propertiesFileAuditor">
-    </builder>
-    <runtime>
-       <run
-             class="com.ancit.favorites.builders.PropertiesAuditorNature">
-       </run>
-    </runtime>
-    <requires-nature id="org.eclipse.jdt.core.javanature"/>
-   <requires-nature id="org.eclipse.pde.PluginNature"/>
  </extension>
  <extension
        point="org.eclipse.ui.perspectives">
