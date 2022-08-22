@@ -41,7 +41,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 
-import com.ancit.favorites.builders.PropertiesFileAuditor;
 import com.ancit.favorites.views.FavoritesView2;
 
 /*
@@ -71,7 +70,6 @@ public class OpenFavoritesViewActionDelegate implements IWorkbenchWindowActionDe
 			return;
 		}
 
-		PropertiesFileAuditor.addBuilderToProject(getProject());
 		IWorkbenchPage page = window.getActivePage();
 		if (page == null) {
 			return;
