@@ -263,15 +263,4 @@
           class="com.ancit.favorites.preferences.PreferenceInitializer">
     </initializer>
  </extension>
- <extension
-       point="org.eclipse.ui.propertyPages">
-    <page
-          adaptable="false"
-          class="com.ancit.favorites.properties.FavoriteResourcePropertyPage"
-          icon="icons/sample.gif"
-          id="com.ancit.favorites.resourcePropertyPage"
-          name="Favorite Properties"
-          objectClass="org.eclipse.core.resources.IResource">
-    </page>
- </extension>
 </plugin>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Sample Category"
+            id="com.ancit.preferences.properties">
+      </category>
+      <view
+            id="com.ancit.preferences.properties.views.SampleView"
+            name="Sample View"
+            icon="icons/sample.png"
+            class="com.ancit.preferences.properties.views.SampleView"
+            category="com.ancit.preferences.properties"
+            inject="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="com.ancit.preferences.properties.views.SampleView"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               ratio="0.5">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.ancit.preferences.properties.preferences.SamplePreferencePage"
+            id="com.ancit.preferences.properties.preferences.SamplePreferencePage"
+            name="Sample Preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="com.ancit.preferences.properties.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="com.ancit.preferences.properties.properties.SamplePropertyPage"
+            id="com.ancit.preferences.properties.properties.samplePropertyPage"
+            name="Sample Page"
+            nameFilter="*.*">
+         <enabledWhen>
+            <instanceof
+                  value="org.eclipse.core.resources.IFile">
+            </instanceof>
+         </enabledWhen>
+      </page>
+   </extension>
+
+</plugin>

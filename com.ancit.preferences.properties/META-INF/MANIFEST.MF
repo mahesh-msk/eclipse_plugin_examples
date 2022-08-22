@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Properties
+Bundle-SymbolicName: com.ancit.preferences.properties;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.ancit.preferences.properties.Activator
+Bundle-Vendor: ANCIT
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: com.ancit.preferences.properties
+Import-Package: javax.inject
+Bundle-ActivationPolicy: lazy
