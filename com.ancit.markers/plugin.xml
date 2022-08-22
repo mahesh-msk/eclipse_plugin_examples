@@ -142,12 +142,12 @@
       <super
             type="org.eclipse.core.resources.problemmarker">
       </super>
-      <persistent
-            value="true">
-      </persistent>
       <super
             type="org.eclipse.core.resources.textmarker">
       </super>
+      <persistent
+            value="true">
+      </persistent>
    </extension>
    <extension
          id="com.ancit.markers.sampleBuilder"
@@ -159,5 +159,12 @@
                class="com.ancit.markers.builder.SampleBuilder">
          </run>
       </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="com.ancit.markers.builder.SampleMarkerResolutionGenerator"
+            markerType="com.ancit.markers.xmlProblem">
+      </markerResolutionGenerator>
    </extension>
 </plugin>
