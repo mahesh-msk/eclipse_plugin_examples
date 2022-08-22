@@ -1,7 +1,7 @@
 /*
  * FILE:            PersonTreeContentProvider.java
  *
- * SW-COMPONENT:    com.ancit.favorites
+ * SW-COMPONENT:    com.ancit.jface.viewers
  *
  * DESCRIPTION:     -
  *
@@ -13,10 +13,12 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.jface.viewers;
+package com.ancit.jface.viewers.treeviewer;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+
+import com.ancit.jface.viewers.model.Person;
 
 public class PersonTreeContentProvider extends ArrayContentProvider implements ITreeContentProvider {
 

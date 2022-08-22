@@ -1,7 +1,7 @@
 /*
  * FILE:            PersonTableLabelProvider.java
  *
- * SW-COMPONENT:    com.ancit.favorites
+ * SW-COMPONENT:    com.ancit.jface.viewers
  *
  * DESCRIPTION:     -
  *
@@ -13,11 +13,13 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.jface.viewers;
+package com.ancit.jface.viewers.tableviewer;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import com.ancit.jface.viewers.model.Person;
 
 public class PersonTableLabelProvider extends LabelProvider implements ITableLabelProvider {
 

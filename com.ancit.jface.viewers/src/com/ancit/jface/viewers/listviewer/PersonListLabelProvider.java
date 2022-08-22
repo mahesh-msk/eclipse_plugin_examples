@@ -1,7 +1,7 @@
 /*
  * FILE:            PersonListLabelProvider.java
  *
- * SW-COMPONENT:    com.ancit.favorites
+ * SW-COMPONENT:    com.ancit.jface.viewers
  *
  * DESCRIPTION:     -
  *
@@ -13,16 +13,20 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.jface.viewers;
+package com.ancit.jface.viewers.listviewer;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+import com.ancit.jface.viewers.model.Person;
+
 public class PersonListLabelProvider extends LabelProvider {
+	@Override
 	public Image getImage(Object element) {
 		return null;
 	}
 
+	@Override
 	public String getText(Object element) {
 		Person person = (Person) element;
 		return person.firstName + " " + person.lastName;

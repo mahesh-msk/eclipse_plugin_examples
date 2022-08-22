@@ -13,7 +13,7 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.jface.viewers;
+package com.ancit.jface.viewers.textviewer;
 
 public class TextViewerExample {
 //	public static void main(String[] args) {

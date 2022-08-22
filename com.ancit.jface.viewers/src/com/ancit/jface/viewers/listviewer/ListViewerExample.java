@@ -1,7 +1,7 @@
 /*
  * FILE:            ListViewerExample.java
  *
- * SW-COMPONENT:    com.ancit.favorites
+ * SW-COMPONENT:    com.ancit.jface.viewers
  *
  * DESCRIPTION:     -
  *
@@ -13,7 +13,7 @@
  * payment of damages. All rights reserved in the event of the grant
  * of a patent, utility model or design.
  */
-package com.ancit.favorites.jface.viewers;
+package com.ancit.jface.viewers.listviewer;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,6 +24,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import com.ancit.jface.viewers.model.Person;
 
 public class ListViewerExample {
 	public static void main(String[] args) {
