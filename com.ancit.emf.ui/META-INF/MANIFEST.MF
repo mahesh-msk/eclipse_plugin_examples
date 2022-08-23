@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ui
+Bundle-SymbolicName: com.ancit.emf.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.ancit.emf.ui.Activator
+Bundle-Vendor: ANCIT
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.ancit.emf,
+ org.eclipse.emf.ecore.xmi
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: com.ancit.emf.ui
+Import-Package: javax.inject
+Bundle-ActivationPolicy: lazy

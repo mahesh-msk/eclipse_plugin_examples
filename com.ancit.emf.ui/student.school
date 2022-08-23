@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<school:School xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:school="http://www.ancit.org/school" name="School">
+  <classes standard="1">
+    <students seatNo="1" name="Shiva" dateOfBirth="05/10/1999"/>
+    <students seatNo="2" name="Ram" dateOfBirth="10/11/1998"/>
+    <students seatNo="3" name="Krish" dateOfBirth="14/11/1997"/>
+    <students seatNo="4" name="Surya" dateOfBirth=""/>
+  </classes>
+</school:School>
