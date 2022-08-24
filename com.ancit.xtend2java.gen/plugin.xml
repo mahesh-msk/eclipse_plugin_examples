@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="com.ancit.xtend2java.gen.XtendToJava"
+            id="com.ancit.xtend2java.gen.XtendToJava"
+            name="Xtend To Java View"
+            restorable="true">
+      </view>
+      <view
+            class="com.ancit.xtend2java.gen.XtendToJavaViewPart"
+            id="com.ancit.xtend2java.gen.view1"
+            name="XPT To Java View"
+            restorable="true">
+      </view>
+      <view
+            class="com.ancit.xtend2java.gen.view.OAWViewPart"
+            id="com.ancit.xtend2java.gen.oawviewid"
+            name="OAW Tree View"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>

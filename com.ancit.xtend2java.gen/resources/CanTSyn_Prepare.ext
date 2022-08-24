@@ -1,0 +1,68 @@
+/*
+**********************************************************************************************************************
+*
+* COPYRIGHT RESERVED, Robert Bosch GmbH, 2016. All rights reserved.
+* The reproduction, distribution and utilization of this document as well as the communication of its contents to
+* others without explicit authorization is prohibited. Offenders will be held liable for the payment of damages.
+* All rights reserved in the event of the grant of a patent, utility model or design.
+*
+**********************************************************************************************************************
+*/
+
+import bsw;
+import bsw::CanTSynModule;
+
+extension CanTSyn::CanTSyn_GenUtils;
+extension org::eclipse::xtend::util::stdlib::counter;
+extension org::eclipse::xtend::util::stdlib::codetracing;
+extension org::eclipse::xtend::util::stdlib::io; /*to print debug info */
+
+/***************************************************************************************************
+* Root function
+***************************************************************************************************/
+
+Void prepareCanTSyn(Autosar this):
+    canTSyn != null ? (
+        canTSyn.CanTSyn_forwardIds()
+    ) : info("[CANTSYN] CanTSyn is not configured. Nothing to forward.") 
+;
+
+
+/***************************************************************************************************
+* Main forward function
+***************************************************************************************************/
+
+private Void CanTSyn_forwardIds(CanTSyn this):
+    this.canTSynGlobalTimeDomain != null ? (
+	
+	/* Forward unique IDs to CanTSynGlobalTimeMasterConfirmationHandleId. Reset the counter before forwarding */
+	counterReset("CanTSynGlobalTimeMasterConfirmationHandleIdCtr")->
+	CanTSyn_getCanTSynGlobalTimeDomainMaster().canTSynGlobalTimeMaster.canTSynGlobalTimeMasterPdu.canTSyn_forwardCanTSyn_MasterConfirmationHandleId()->
+	
+	/* Forward unique IDs to CanTSynGlobalTimeSlaveHandleId. Reset the counter before forwarding */ 
+	counterReset("CanTSynGlobalTimeSlaveHandleIdCtr")->
+	CanTSyn_getCanTSynGlobalTimeDomainSlave().canTSynGlobalTimeSlave.canTSynGlobalTimeSlavePdu.canTSyn_forwardCanTSynSlaveHandleId()
+	        ) : error("[CANTSYN][CanTSynGlobalTimeDomain] CanTSynGlobalTimeDomain not available. Forwarding not executed.")
+;
+
+/***************************************************************************************************
+* Forward functions
+***************************************************************************************************/
+
+/* Forward unique IDs to CanTSynGlobalTimeMasterConfirmationHandleId.*/
+private Void canTSyn_forwardCanTSyn_MasterConfirmationHandleId(CanTSynGlobalTimeMasterPdu this):
+    this.fwdCanTSynGlobalTimeMasterConfirmationHandleId(counterInc("CanTSynGlobalTimeMasterConfirmationHandleIdCtr").toInteger()-1)
+;
+
+
+/* Forward unique IDs to CanTSynGlobalTimeSlaveHandleId.*/
+private Void canTSyn_forwardCanTSynSlaveHandleId(CanTSynGlobalTimeSlavePdu this):
+    this.fwdCanTSynGlobalTimeSlaveHandleId(counterInc("CanTSynGlobalTimeSlaveHandleIdCtr").toInteger()-1)
+;
+
+/***************************************************************************************************
+* Help functions
+***************************************************************************************************/
+
+
+

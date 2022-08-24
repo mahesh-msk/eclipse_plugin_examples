@@ -1,0 +1,227 @@
+«REM»/*
+ **********************************************************************************************************************
+ *
+ * COPYRIGHT RESERVED, Robert Bosch GmbH, 2016. All rights reserved.
+ * The reproduction, distribution and utilization of this document as well as the communication of its contents to
+ * others without explicit authorization is prohibited. Offenders will be held liable for the payment of damages.
+ * All rights reserved in the event of the grant of a patent, utility model or design.
+ *
+ **********************************************************************************************************************
+*/
+«ENDREM»
+
+
+«IMPORT bsw»
+«IMPORT bsw::CanTSynModule»
+
+«EXTENSION templates::CanTSyn::CanTSyn_GenUtils»
+«EXTENSION templates::CanTSyn::CanTSyn_GenerateCodeFile_Constants»
+«EXTENSION templates::emfUtils»
+«EXTENSION templates::aspects::CanTSyn_AspectStubs»
+«REM» «EXTENSION org::eclipse::xtend::util::stdlib::io»  to print debug info «ENDREM»
+
+
+«REM»
+/***************************************************************************************************
+* Root function
+***************************************************************************************************/
+«ENDREM»
+«DEFINE Generate FOR Autosar»
+«FILE "CanTSyn_Cfg.c"-»
+«EXPAND CanTSyn_GenerateFileHeader::CanTSyn_FileHeader FOR this»
+«EXPAND CanTSyn_GenerateCfg_c FOR canTSyn-»
+«ENDFILE-»
+«ENDDEFINE-»
+
+
+«REM»
+/***************************************************************************************************
+* File content
+***************************************************************************************************/
+«ENDREM»
+«DEFINE CanTSyn_GenerateCfg_c FOR CanTSyn-»
+
+/***************************************************************************************************
+* Includes
+***************************************************************************************************/
+#include "CanTSyn.h"
+#include "CanIf.h"
+#include "CanTSyn_Prv.h"
+
+
+#define CANTSYN_START_SEC_CONST_8
+#include "CanTSyn_MemMap.h"
+«REM»«IF isCanTSynGlobalTimeMasterConfigured() == true-»«ENDREM»
+
+«FOREACH this.canTSynGlobalTimeDomain.canTSynGlobalTimeSyncDataIDList AS timeSyncDataIDList ITERATOR iter-»
+«IF (timeSyncDataIDList != null )»
+
+/* Array to hold DataIDListElements(index and value) of SYNC Messages */
+CONST(uint8, AUTOMATIC) CanTSyn_SYNCDataIdlist_«IF(timeSyncDataIDList.parent.canTSynGlobalTimeMaster != null)-»«timeSyncDataIDList.parent.canTSynGlobalTimeMaster.shortName-»«ENDIF-»
+«IF(timeSyncDataIDList.parent.canTSynGlobalTimeSlave != null)-»«timeSyncDataIDList.parent.canTSynGlobalTimeSlave.shortName-»«ENDIF-»[16]=
+{
+    «FOREACH timeSyncDataIDList.canTSynGlobalTimeSyncDataIDListElement.sortBy(e|e.canTSynGlobalTimeSyncDataIDListIndex) AS canTSynSyncDataIdList ITERATOR iter-»
+    «canTSynSyncDataIdList.canTSynGlobalTimeSyncDataIDListValue»u«IF iter.lastIteration»«ELSE-»,«ENDIF-»«ENDFOREACH-»
+
+};
+«ENDIF-»
+«IF iter.lastIteration-»«ELSE-»«ENDIF-»
+«ENDFOREACH»
+«FOREACH this.canTSynGlobalTimeDomain.canTSynGlobalTimeFupDataIDList AS timeFupDataIDList ITERATOR iter-»
+«IF (timeFupDataIDList != null )»
+/* Array to hold DataIDListElements(index and value) of FUP Messages */
+CONST(uint8, AUTOMATIC) CanTSyn_FUPDataIdlist_«IF(timeFupDataIDList.parent.canTSynGlobalTimeMaster != null)-»«timeFupDataIDList.parent.canTSynGlobalTimeMaster.shortName-»«ENDIF-»
+«IF(timeFupDataIDList.parent.canTSynGlobalTimeSlave != null)-»«timeFupDataIDList.parent.canTSynGlobalTimeSlave.shortName-»«ENDIF-»[16]=
+{
+    «FOREACH timeFupDataIDList.canTSynGlobalTimeFupDataIDListElement.sortBy(e|e.canTSynGlobalTimeFupDataIDListIndex) AS canTSynFupDataIdList ITERATOR iter-»
+    «canTSynFupDataIdList.canTSynGlobalTimeFupDataIDListValue»u«IF iter.lastIteration»«ELSE-»,«ENDIF-»«ENDFOREACH-»
+
+};
+«ENDIF-»
+«IF iter.lastIteration-»«ELSE-»«ENDIF-»
+«ENDFOREACH»
+
+«REM»
+«IF isCanTSynGlobalTimeSlaveConfigured() == true-»
+«FOREACH this.CanTSyn_getCanTSynGlobalTimeDomainSlave().canTSynGlobalTimeSlave AS timeDomainSlave ITERATOR iter-»
+«IF ((timeDomainSlave.canTSynRxCrcValidated.toString() == "CRC_VALIDATED") || (timeDomainSlave.canTSynRxCrcValidated.toString() == "CRC_OPTIONAL") ||(timeDomainSlave.canTSynRxCrcValidated.toString() == "CRC_IGNORED") )»
+/* Array to hold DataIDListElements(index and value) of SYNC Messages */
+CONST(uint8, AUTOMATIC) CanTSyn_SYNCDataIdlist_«timeDomainSlave.shortName»[16]=
+{
+    «FOREACH timeDomainSlave.parent.canTSynGlobalTimeSyncDataIDList.getSortedCanTSynGlobalTimeSyncDataIDListElement() AS canTSynSyncDataIdList ITERATOR iter-»
+    «canTSynSyncDataIdList.canTSynGlobalTimeSyncDataIDListValue»u«IF iter.lastIteration»«ELSE-»,«ENDIF-»«ENDFOREACH»
+};
+
+/* Array to hold DataIDListElements(index and value) of FUP Messages */
+CONST(uint8, AUTOMATIC) CanTSyn_FUPDataIdlist_«timeDomainSlave.shortName»[16]=
+{
+    «FOREACH timeDomainSlave.parent.canTSynGlobalTimeFupDataIDList.getSortedCanTSynGlobalTimeFupDataIDListElement() AS canTSynFupDataIdList ITERATOR iter-»
+    «canTSynFupDataIdList.canTSynGlobalTimeFupDataIDListValue»u«IF iter.lastIteration»«ELSE-»,«ENDIF-»«ENDFOREACH»
+};
+
+«ENDIF»
+«IF iter.lastIteration»«ELSE»«ENDIF»
+«ENDFOREACH»
+«ENDIF-»
+«ENDREM»
+#define CANTSYN_STOP_SEC_CONST_8
+#include "CanTSyn_MemMap.h"
+
+
+
+#define CANTSYN_START_SEC_VAR_CLEARED_8
+#include "CanTSyn_MemMap.h"
+
+«FOREACH this.CanTSyn_getCanTSynGlobalTimeDomainMaster().canTSynGlobalTimeMaster AS timeDomainMaster ITERATOR iter-»
+VAR(uint8, AUTOMATIC) CanTSyn_MasterBuffer_«timeDomainMaster.shortName»[«IF(timeDomainMaster.parent.canTSynUseExtendedMsgFormat == true)»16«ELSE»8«ENDIF»];  /* Master Buffer for «timeDomainMaster.shortName»*/
+«ENDFOREACH-»
+
+
+
+
+#define CANTSYN_STOP_SEC_VAR_CLEARED_8
+#include "CanTSyn_MemMap.h"
+
+
+
+#define CANTSYN_START_SEC_CONST_UNSPECIFIED
+#include "CanTSyn_MemMap.h"
+
+«IF isCanTSynGlobalTimeMasterConfigured() == true-»
+/* Global Time Domain Master Configuration */
+CONST(CanTSyn_Tx_Configuration_t, AUTOMATIC) CanTSyn_Master_Tx_a[«this.CanTSyn_getCanTSynGlobalTimeMaster().size»u]=
+{
+    «FOREACH this.CanTSyn_getCanTSynGlobalTimeDomainMaster().canTSynGlobalTimeMaster AS timeDomainMaster ITERATOR iter-»
+    {
+        /* «timeDomainMaster.parent.shortName»: «timeDomainMaster.shortName» */
+        &CanTSyn_MasterBuffer_«timeDomainMaster.shortName»[0], /* Master buffer */
+        «IF (timeDomainMaster.parent.canTSynGlobalTimeSyncDataIDList == null)»NULL_PTR«ELSE»&CanTSyn_SYNCDataIdlist_«timeDomainMaster.shortName»[0]«ENDIF», /* SyncData ID list */
+        «IF (timeDomainMaster.parent.canTSynGlobalTimeFupDataIDList == null)»NULL_PTR«ELSE»&CanTSyn_FUPDataIdlist_«timeDomainMaster.shortName»[0]«ENDIF»,  /* FUP Data ID list */
+        CANTSYN_«timeDomainMaster.canTSynGlobalTimeTxCrcSecured», /* configured CRC */
+        «timeDomainMaster.parent.canTSynSynchronizedTimeBaseRef.stbMSynchronizedTimeBaseIdentifier»u, /* stbm Id */
+        «((timeDomainMaster.canTSynGlobalTimeTxPeriod)/(this.canTSynGeneral.canTSynMainFunctionPeriod)).toInteger()»u, /* Tx period in ticks */
+        «((timeDomainMaster.canTSynMasterConfirmationTimeout)/(this.canTSynGeneral.canTSynMainFunctionPeriod)).toInteger()»u, /* Tx confirmation period in ticks */
+        «((timeDomainMaster.canTSynGlobalTimeDebounceTime)/(this.canTSynGeneral.canTSynMainFunctionPeriod)).toInteger()»u, /* Global debounce time in Ticks */
+        «((timeDomainMaster.canTSynCyclicMsgResumeTime)/(this.canTSynGeneral.canTSynMainFunctionPeriod)).toInteger()»u,  /* CanTSynCyclicMsgResumeTime in Ticks*/
+        «timeDomainMaster.parent.canTSynGlobalTimeDomainId»u, /* domain Id */
+        «timeDomainMaster.canTSynGlobalTimeMasterPdu.canTSynGlobalTimePduRef.CanIf_Aspects_CanTSyngetCanIfTxControllerId()»u,   /* controller Id */
+        «timeDomainMaster.canTSynGlobalTimeMasterPdu.canTSynGlobalTimePduRef.CanIf_Aspects_CanTSyngetCanIfTxPduName()», /* CanIf tx pdu Id */
+        «(timeDomainMaster.canTSynImmediateTimeSync == true) ? "TRUE " : "FALSE"»,  /* ImmediateTimeSync Frame*/
+        «(timeDomainMaster.parent.canTSynUseExtendedMsgFormat == true) ? "TRUE" : "FALSE"»  /* CanTSynUseExtendedMsgFormat TRUE or FALSE*/
+        
+   
+        
+    }«IF iter.lastIteration»«ELSE»,«ENDIF»
+«ENDFOREACH»
+};
+«ENDIF-»
+
+
+«IF isCanTSynGlobalTimeSlaveConfigured() == true-»
+/* Global Time Domain Slave Configuration */
+CONST(CanTSyn_Rx_Configuration_t, AUTOMATIC) CanTSyn_Slave_Rx_a[«this.CanTSyn_getCanTSynGlobalTimeSlave().size»u]=
+{
+    «FOREACH this.CanTSyn_getCanTSynGlobalTimeDomainSlave().canTSynGlobalTimeSlave AS timeDomainSlave ITERATOR iter-»
+    {
+        /* «timeDomainSlave.parent.shortName»: «timeDomainSlave.shortName» */
+        «IF (timeDomainSlave.parent.canTSynGlobalTimeSyncDataIDList == null)»NULL_PTR«ELSE»&CanTSyn_SYNCDataIdlist_«timeDomainSlave.shortName»[0]«ENDIF», /* SyncData ID list */
+        «IF (timeDomainSlave.parent.canTSynGlobalTimeFupDataIDList == null)»NULL_PTR«ELSE»&CanTSyn_FUPDataIdlist_«timeDomainSlave.shortName»[0]«ENDIF», /* FUP Data ID list */
+        CANTSYN_«timeDomainSlave.canTSynRxCrcValidated», /* configured CRC */
+        «timeDomainSlave.parent.canTSynSynchronizedTimeBaseRef.stbMSynchronizedTimeBaseIdentifier»u, /* STBM Id */
+        «((timeDomainSlave.canTSynGlobalTimeFollowUpTimeout)/(this.canTSynGeneral.canTSynMainFunctionPeriod)).toInteger()»u, /* Rx follow up timeout in ticks*/
+        «timeDomainSlave.parent.canTSynGlobalTimeDomainId»u, /* domain Id */
+        «timeDomainSlave.canTSynGlobalTimeSequenceCounterJumpWidth»u,  /* jump width */
+        «(timeDomainSlave.parent.canTSynUseExtendedMsgFormat == true) ? "TRUE" : "FALSE"»  /* CanTSynUseExtendedMsgFormat TRUE or FALSE*/
+
+    }«IF iter.lastIteration»«ELSE»,«ENDIF»
+  «ENDFOREACH»
+};
+«ENDIF-»
+
+#define CANTSYN_STOP_SEC_CONST_UNSPECIFIED
+#include "CanTSyn_MemMap.h"
+
+
+#define CANTSYN_START_SEC_CONST_UNSPECIFIED
+#include "CanTSyn_MemMap.h"
+
+
+/* CanTSyn config structure */
+CONST( CanTSyn_ConfigType, AUTOMATIC) CanTSyn_Config[] = {
+{
+«IF isCanTSynGlobalTimeMasterConfigured() == true-»
+    &CanTSyn_Master_Tx_a[0u],	            /* Global Time Domain Master */
+«ENDIF-»
+«IF isCanTSynGlobalTimeSlaveConfigured() == true-»
+    &CanTSyn_Slave_Rx_a[0u],	                /* Global Time Domain Slave */
+«ENDIF-»
+    «CanTSyn_getCanTSynGlobalTimeMaster().size»u,     /* Total number of configured master */
+    «CanTSyn_getCanTSynGlobalTimeSlave().size»u       /* Total number of configured slave */
+}
+};
+
+
+#define CANTSYN_STOP_SEC_CONST_UNSPECIFIED
+#include "CanTSyn_MemMap.h"
+
+
+#define CANTSYN_START_SEC_VAR_CLEARED_UNSPECIFIED
+#include "CanTSyn_MemMap.h"
+
+«IF isCanTSynGlobalTimeMasterConfigured() == true-»
+/* Global Time Master Pdu status */
+VAR(CanTSyn_Tx_Status_t, AUTOMATIC)  CanTSyn_TxRam[«this.CanTSyn_getCanTSynGlobalTimeMaster().size»u];
+«ENDIF-»
+
+«IF isCanTSynGlobalTimeSlaveConfigured() == true-»
+/* Global Time Slave Pdu status */
+VAR(CanTSyn_Rx_Status_t, AUTOMATIC)  CanTSyn_RxRam[«this.CanTSyn_getCanTSynGlobalTimeSlave().size»u];
+«ENDIF-»
+
+#define CANTSYN_STOP_SEC_VAR_CLEARED_UNSPECIFIED
+#include "CanTSyn_MemMap.h"
+
+
+
+«ENDDEFINE-»
+

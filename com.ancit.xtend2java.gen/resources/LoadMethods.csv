@@ -1,0 +1,2 @@
+CanTSyn_getCanTSynGlobalTimeDomainMaster(),getCanTSynGlobalTimeDomains(),List<CanTSynGlobalTimeDomain>,CanTSynGlobalTimeDomain
+CanTSyn_getCanTSynGlobalTimeDomainSlave(),getCanTSynGlobalTimeDomains(),List<CanTSynGlobalTimeDomain>,CanTSynGlobalTimeDomain

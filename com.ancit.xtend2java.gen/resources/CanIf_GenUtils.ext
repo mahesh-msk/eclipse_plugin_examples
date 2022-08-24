@@ -1,0 +1,1494 @@
+/*
+**********************************************************************************************************************
+*
+* COPYRIGHT RESERVED, Robert Bosch GmbH, 2014. All rights reserved.
+* The reproduction, distribution and utilization of this document as well as the communication of its contents to
+* others without explicit authorization is prohibited. Offenders will be held liable for the payment of damages.
+* All rights reserved in the event of the grant of a patent, utility model or design.
+*
+**********************************************************************************************************************
+*/
+ /**
+ * <copyright>
+ *
+ *Copyright (c) 2006-2007 Robert Bosch Engineering and Business Solutions Limited
+ *
+ * </copyright>
+ *
+ *
+ *    Plugin Name                        :    com.bosch.autosartools.bsw.canif.codegen
+ *    Package/Class Name                    :    templates/canif/common/canif_utils.ext
+ *    Current Version                    :    1.3
+ *    Author(s)                           :    Ananda Babu, nir4kor (RBIN/EMT2)
+ *    Date Created                    :    1-june-2007
+ *
+  *    Description: This is the extend file which contains all the utility
+ *               methods specific for CAN Driver templates
+
+ *
+ */
+ /*MODEL IMPORTS*/
+
+ /* Import Block to Define the module */
+import bsw;
+import bsw::CanIfModule;
+import bsw::CanModule;
+import bsw::EcuCModule;
+import bsw::PduRModule;
+import bsw::ComModule;
+import bsw::CanTSynModule;
+import bsw::J1939TpModule;
+import emf;
+import bsw::CanNmModule;
+
+/* End of Import Block */
+
+/* Extension Block to include the following files */
+extension templates::mathlib;
+extension org::eclipse::xtend::util::stdlib::elementprops;
+extension templates::CanIf::common::CanIf_GenerateCodeFileConstants;
+extension templates::CanIf::common::CanIf_GenerateModelConstants;
+extension templates::common::CanIf_PostBuildUtils;
+extension templates::aspects::CanIf_AspectStubs;
+extension org::eclipse::xtend::util::stdlib::counter;
+/* End of Extension Block */
+/* to print debug info */
+extension org::eclipse::xtend::util::stdlib::io;
+
+ /*This method returns Index for the CanIfRxPduUserRxIndicationUser with input provided by parameter canIfRxPduUserRxIndicationUL */
+ Integer CanIf_getIndexForCanDrv( CanIfCtrlCfg this):
+ let candrvList = this.CanIf_getCanIf().parent.can.sortBy(e|e.shortName).shortName:
+candrvList.indexOf(this.canIfCtrlCanCtrlRef.parent.parent.shortName)
+;
+
+/* get the list of CanIfRxPduCfg for UL CDD */
+/*List[CanHardwareObject] CanIf_GetHohList(CanIf this) :
+let canlist = this.parent.can.sortBy(e|e.parent.shortName).shortName:
+let hohlist = {}:
+canlist.addAll()
+hohlist.
+;
+
+
+/*Integer  Get_VendorId(CanIfRxPduCfg pdu):
+let bswimpl =  (List[BswImplementation]){}:      
+let tem =  pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo():
+//let temp =  pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorApiInfix:
+info("vendor Infix--->"+pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorApiInfix)->
+info("vendor Id--->"+pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorId)->
+pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorId;
+
+BswImplementation getvendorInfo(Object o):
+o
+;
+
+String  Get_VendorId_Infix(CanIfCtrlDrvCfg CtrlDrv):
+CtrlDrv.canIfRbCtrlDrvPrefix
+;
+*/
+
+
+
+//String  Get_VendorId_VendorInfix(CanGeneral Inst):
+/*let temp = Inst.shortName:
+let driver = Inst.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorId:
+let bswimpl =  (List[BswImplementation]){}:      
+let tem =  pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorApiInfix:
+info("vendor Infix--->"+pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorApiInfix)->
+info("vendor Id--->"+pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorId)->*/
+//"6_"+(Inst.parent.shortName);
+
+/*String  Get_VendorInFix(CanGeneral Inst):
+let temp = Inst.canBswImplementationRef_Foreign.shortName:
+let driver = Inst.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorId:
+let bswimpl =  (List[BswImplementation]){}:      
+let tem =  pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorApiInfix:
+info("vendor Infix--->"+pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorApiInfix)->
+info("vendor Id--->"+pdu.CanIf_getCanIf().parent.can.get(0).canGeneral.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorId)->
+Inst.canBswImplementationRef_Foreign.getSystemRef().getvendorInfo().vendorApiInfix;
+
+**/
+/*Calibration */
+
+String  Get_VendorId_VendorInfix(CanIfCtrlDrvCfg this):
+if(this.parent.canIfPublicCfg.canIfPublicMultipleDrvSupport) then
+""+this.canIfRbCtrlDrvPrefix+"_"
+else
+""
+;
+
+String CanIf_GetRxPduCanIdCalibName(CanIfRxPduCfg pdu):
+if(((pdu.canIfRxPduHrhIdRef.canIfHrhIdSymRef.canHandleType== "FULL") || (pdu.canIfRxPduHrhIdRef.canIfHrhListCfg!=null)) && (pdu.canIfRxPduType ==null ||(pdu.canIfRxPduType !=null && pdu.canIfRxPduType=="STATIC"))) then
+"&SchM_CData_CanIf_CanIf_"+(pdu.CanIf_getCanIf().parent.can.get(0).getCalibPrefix())+(pdu.shortName)+"CanId"+(pdu.CanIf_getCanIf().parent.can.get(0).getCalibSuffix())+"_C_Func"
+else
+"NULL_PTR"
+;
+
+String CanIf_GetRxPduCanDlcCalibName(CanIfRxPduCfg pdu):
+if( pdu.canIfRxPduDlc != 0 ) then
+"SchM_CData_CanIf_CanIf_"+(pdu.CanIf_getCanIf().parent.can.get(0).getCalibPrefix())+(pdu.shortName)+"CanDlc"+(pdu.CanIf_getCanIf().parent.can.get(0).getCalibSuffix())+"_C_Func"
+else
+"NULL_PTR"
+;
+
+String CanIf_GetRxNodeCalibName(CanIfHrhCfg hrh):
+"SchM_CData_CanIf_CanIf_"+(hrh.CanIf_getCanIf().parent.can.get(0).getCalibPrefix())+(hrh.shortName)+"CanNod"+(hrh.CanIf_getCanIf().parent.can.get(0).getCalibSuffix())+"_C_Func"
+;
+
+/*This method will return as TRUE if Node calibration is supported */
+Boolean CanIf_IsNodeCalibSupported(CanIf this):
+(this.canIfPublicCfg.canIfRbCalibrationSupport!=null) && (this.canIfPublicCfg.canIfRbCalibrationSupport.canIfRbCalibration)
+&&(this.parent.can.get(0).canGeneral.canRbCalibrationSupport!=null) && this.parent.can.get(0).canGeneral.canRbCalibrationSupport.canRbNodeCalibration
+;
+
+/* Sorts a list of CanIfRxPduCfg based on canIfRxPduId. */
+List[CanIfRxPduCfg] CanIf_sortRxPduCfgByRxPduId(List[CanIfRxPduCfg] this) :
+    this.sortBy(e|e.canIfRxPduId)
+;
+/* get the list of CanIfRxPduCfg for UL CDD */
+List[CanIfRxPduCfg] CanIf_GetRxPduForCDD(List[CanIfRxPduCfg] this) :
+    this.select(e|e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL == "CDD").sortBy(e|e.canIfRxPduId)
+;
+
+/* get the list of CanIfTxPduCfg for UL CDD */
+List[CanIfTxPduCfg] CanIf_GetTxPduForCDD(List[CanIfTxPduCfg] this) :
+    this.select(e|e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "CDD").sortBy(e|e.canIfTxPduId)
+;
+
+/* get the list of CanIfRxPduCfg for UL CAN_NM */
+List[CanIfRxPduCfg] CanIf_GetRxPduForCANNM(List[CanIfRxPduCfg] this) :
+    this.select(e|e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL == "CAN_NM").sortBy(e|e.canIfRxPduId)
+;
+
+/* get the list of CanIfTxPduCfg for UL CAN_NM */
+List[CanIfTxPduCfg] CanIf_GetTxPduForCANNM(List[CanIfTxPduCfg] this) :
+    this.select(e|e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "CAN_NM").sortBy(e|e.canIfTxPduId)
+;
+
+/* get the list of CanIfRxPduCfg for UL CAN_TP */
+List[CanIfRxPduCfg] CanIf_GetRxPduForCANTP(List[CanIfRxPduCfg] this) :
+    this.select(e|e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL == "CAN_TP").sortBy(e|e.canIfRxPduId)
+;
+
+/* get the list of CanIfTxPduCfg for UL CAN_TP */
+List[CanIfTxPduCfg] CanIf_GetTxPduForCANTP(List[CanIfTxPduCfg] this) :
+    this.select(e|e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "CAN_TP").sortBy(e|e.canIfTxPduId)
+;
+
+/* get the list of CanIfRxPduCfg for UL CAN_TSYN */
+List[CanIfRxPduCfg] CanIf_GetRxPduForCANTSYN(List[CanIfRxPduCfg] this) :
+    this.select(e|e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL == "CAN_TSYN").sortBy(e|e.canIfRxPduId)
+;
+
+/* get the list of CanIfTxPduCfg for UL CAN_TSYN */
+List[CanIfTxPduCfg] CanIf_GetTxPduForCANTSYN(List[CanIfTxPduCfg] this) :
+    this.select(e|e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "CAN_TSYN").sortBy(e|e.canIfTxPduId)
+;
+
+/* get the list of CanIfRxPduCfg for UL J1939NM */
+List[CanIfRxPduCfg] CanIf_GetRxPduForJ1939NM(List[CanIfRxPduCfg] this) :
+    this.select(e|e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL == "J1939NM").sortBy(e|e.canIfRxPduId)
+;
+
+/* get the list of CanIfTxPduCfg for UL J1939NM */
+List[CanIfTxPduCfg] CanIf_GetTxPduForJ1939NM(List[CanIfTxPduCfg] this) :
+    this.select(e|e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "J1939NM").sortBy(e|e.canIfTxPduId)
+;
+
+/* get the list of CanIfRxPduCfg for UL J1939TP */
+List[CanIfRxPduCfg] CanIf_GetRxPduForJ1939TP(List[CanIfRxPduCfg] this) :
+    this.select(e|e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL == "J1939TP").sortBy(e|e.canIfRxPduId)
+;
+
+/* get the list of CanIfTxPduCfg for UL J1939TP */
+List[CanIfTxPduCfg] CanIf_GetTxPduForJ1939TP(List[CanIfTxPduCfg] this) :
+    this.select(e|e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "J1939TP").sortBy(e|e.canIfTxPduId)
+;
+
+/* get the list of CanIfRxPduCfg for UL XCP */
+List[CanIfRxPduCfg] CanIf_GetRxPduForXCP(List[CanIfRxPduCfg] this) :
+    this.select(e|e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL == "XCP").sortBy(e|e.canIfRxPduId)
+;
+
+/* get the list of CanIfTxPduCfg for UL XCP */
+List[CanIfTxPduCfg] CanIf_GetTxPduForXCP(List[CanIfTxPduCfg] this) :
+    this.select(e|e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "XCP").sortBy(e|e.canIfTxPduId)
+;
+
+
+/* get the list of CanIfRxPduCfg for UL USER */
+List[CanIfRxPduCfg] CanIf_GetRxPduForUSER(List[CanIfRxPduCfg] this) :
+    this.select(e|e.canIfRxPduUserRxIndicationUL == null && e.canIfRxPduUserRxIndicationName!=null).sortBy(e|e.canIfRxPduId)
+;
+
+/* Sorts a list of Hrh stuctue by canObjectId */
+List[CanIfHrhCfg] CanIf_sortHrhByCanObjectId(List[CanIfHrhCfg] this):
+this.sortBy(e|e.canIfHrhIdSymRef.canObjectId)
+;
+
+/* Sorts a list of Hrh stuctue by canObjectId and short name of Can driver */
+List[CanIfHrhCfg] CanIf_gethrhbyobjectid(CanIfInitCfg this):
+let listofhoh = this.canIfInitHohCfg.sortBy(e|e.CanIf_getCanIf().parent.can.shortName):
+let listofhrh = {}:
+listofhoh.forAll(e|listofhrh.addAll(e.canIfHrhCfg.sortBy(e|e.canIfHrhIdSymRef.canObjectId))->true)->
+listofhrh
+;
+
+/* Sorts a list of Hrh stuctue by canObjectId */
+List[CanIfRxPduCfg] CanIf_sortRxPdusByCanId(List[CanIfRxPduCfg] this):
+this.sortBy(e|e.canIfRxPduCanId)
+;
+
+
+Boolean CanIf_IsHrhofListType(CanIfHrhCfg this):
+this.getProperty("canIfHrhListCfg") != null
+;
+/*This method returns the HRH specific configuration to be printed in canif_cfg.c file*/
+ String CanIf_getHrhType(CanIfHrhCfg this) :
+  switch(this.canIfHrhIdSymRef.canHandleType)
+  {
+    case "FULL": "CANIF_PRV_FULL_E"
+    case "BASIC": ((this.canIfHrhRangeCfg != null)? "CANIF_PRV_BASIC_RANGE_E": "CANIF_PRV_BASIC_LIST_E" )
+    default : ""
+  };
+
+/*This function provides the Pdu Index for acessing Rx PDU's
+* For FULL CAN Pdu Index: canIfRxPduId. The canIfRxPduId of first pdu will be printed. Sorting of Rx-Pdu's based on canIfRxPduId. 
+* For Basic Range: */
+private String CanIf_counterHolder():
+    "counterHolder"
+;
+
+
+private String CanIf_counter():
+    "counter"
+;
+
+/*This function provides the No of RxPdu's referring the Hrh */
+Integer CanIf_getNoOfRxpduForHrh(CanIfHrhCfg this):
+this.parent.parent.canIfRxPduCfg.select(e|e.canIfRxPduHrhIdRef.shortName == this.shortName).size
+;
+
+/*This function provides TxPdus referring to the given Hth */
+List[CanIfTxPduCfg] CanIf_GetMappedTxpdusForHth(CanIfHthCfg this):
+this.parent.parent.canIfTxPduCfg.CanIf_sortByTxIds_1().select(e|e.canIfTxPduBufferRef.canIfBufferHthRef.shortName == this.shortName)
+;
+
+/*This method returns the function name for the given input provided by parameter CanIfRxPduUserRxIndicationUL*/
+ String CanIf_getRxPduUserRxIndicationName( CanIfRxPduCfg this )  :
+  switch(this.canIfRxPduUserRxIndicationUL)
+  {
+    case CanIf_CANNM_USER_TYPE(): "CanNm_RxIndication"
+    case CanIf_CANTP_USER_TYPE(): "CanTp_RxIndication"
+    case CanIf_CANTSYN_USER_TYPE(): "CanTSyn_RxIndication"
+    case CanIf_CDD_USER_TYPE(): this.canIfRxPduUserRxIndicationName
+    case CanIf_J1939NM_USER_TYPE(): "J1939Nm_RxIndication"
+    case CanIf_J1939TP_USER_TYPE(): "J1939Tp_RxIndication"
+    case CanIf_PDUR_USER_TYPE(): "PduR_CanIfRxIndication"
+    case CanIf_XCP_USER_TYPE(): "Xcp_CanIfRxIndication"
+    default : CanIf_USER()
+  }
+ ;
+ 
+ /*This method returns CanIdType value for the given input provided by parameter canIfRxPduCanIdType */
+ Integer CanIf_getRxPduCanIdTypeValue( CanIfRxPduCfg this )  :
+  switch(this.canIfRxPduCanIdType)
+  {
+    case "STANDARD_CAN": "0x20u"
+    case "STANDARD_FD_CAN": "0x31u"
+    case "STANDARD_NO_FD_CAN": "0x30u"
+    case "EXTENDED_CAN": "0x22"
+    case "EXTENDED_FD_CAN": "0x33"
+    case "EXTENDED_NO_FD_CAN": "0x32"
+    default : "" 
+  }
+ ;
+ 
+ 
+  /*This method returns Index for the CanIfRxPduUserRxIndicationUser with input provided by parameter canIfRxPduUserRxIndicationUL */
+ Integer CanIf_getIndexForRxIndication( CanIfRxPduCfg this, Integer i)  :
+    let temp = this.parent.CanIf_getCanIf().CanIf_GetcanIfRxPduCfg().select(e|e.canIfRxPduUserRxIndicationUL!= null && e.canIfRxPduUserRxIndicationName!= null).size :
+    let nonUserPdus= this.parent.CanIf_getCanIf().CanIf_GetcanIfRxPduCfg().select(e|e.canIfRxPduUserRxIndicationUL== "CDD").size +7:
+    if(i== 0) then 
+    {
+      counterReset("cdd")->
+      counterReset("user")
+    }->
+     if(this.canIfRxPduUserRxIndicationUL == "CDD") then
+     {
+        counterInc("cdd")
+     }->
+     if(this.canIfRxPduUserRxIndicationUL == null && this.canIfRxPduUserRxIndicationName != null) then
+     {
+      counterInc("user")
+     }->
+	  switch(this.canIfRxPduUserRxIndicationUL)
+	  {
+	    case CanIf_CANNM_USER_TYPE(): "1"
+	    case CanIf_CANTP_USER_TYPE(): "2"
+	    case CanIf_CANTSYN_USER_TYPE(): "3"
+	    case CanIf_J1939NM_USER_TYPE(): "4"
+	    case CanIf_J1939TP_USER_TYPE(): "5"
+	    case CanIf_PDUR_USER_TYPE(): "6"
+	    case CanIf_XCP_USER_TYPE(): "7"
+	    case CanIf_CDD_USER_TYPE(): 7+ counterGet("cdd")
+	    default: (if(this.canIfRxPduUserRxIndicationName == null) then ("0" ) else (nonUserPdus + counterGet("user")))
+	  }
+;
+
+/*This method provides if canIfHrhRangeCfg container is configured atleast for one Hrh*/
+Boolean CanIf_IsHrhofRangeType(CanIfInitCfg this):
+this.canIfInitHohCfg.canIfHrhCfg.exists(e|e.canIfHrhRangeCfg != null)? "STD_ON": "STD_OFF"
+;
+
+/*This method provides if CanIfHrhListCfg container is configured atleast for one Hrh*/
+Boolean CanIf_IsHrhofListType(CanIfInitCfg this):
+this.canIfInitHohCfg.canIfHrhCfg.select(e|e.canIfHrhListCfg != null).size>0? "STD_ON": "STD_OFF"
+;
+ 
+ /*This method adds one to the passed value, and returns back the computed value*/
+Integer CanIf_IncByOne(Integer existing) :
+   existing + 1
+;
+
+
+Boolean CanIf_IsHrhofBasicMaskType(CanIfHrhCfg this):
+(this.canIfHrhRangeCfg !=null && this.canIfHrhRangeCfg.canIfHrhRangeBaseId!=null)? "TRUE":"FALSE"
+; 
+
+
+ /*This method adds one to the passed value, and returns back the computed value*/
+Integer CanIf_IncByVal(Integer existing, Integer inc) :
+   existing + inc
+;
+
+ /*This method returns the readdata configuration to be printed in canif_cfg.c file*/
+String CanIf_getDataNotifInfo( CanIfRxPduCfg this) :
+  if(this.canIfRxPduReadData && this.canIfRxPduReadNotifyStatus) then "CANIF_READ_NOTIFSTATUS_DATA"
+  else if((this.canIfRxPduReadData== true) && (this.canIfRxPduReadNotifyStatus == false)) then "CANIF_READ_DATA"
+  else if((this.canIfRxPduReadData == false)&& (this.canIfRxPduReadNotifyStatus == true)) then "CANIF_READ_NOTIFSTATUS"
+  else "CANIF_READ_NONE"
+;
+
+Integer CanIf_getIndexOfHrh(CanIfHrhCfg this):
+let listHrh = ((Autosar)eRootContainer).ecu.canIf.CanIf_GetcanIfHrhCfg().sortBy(e|e.canIfHrhIdSymRef.canObjectId):
+listHrh.indexOf(listHrh.selectFirst(e|e.shortName == this.shortName))
+;
+
+
+
+/*Provides the Target Id from the respective UL module generation */
+String CanIf_generateCanIfRxTargetPduId(CanIfRxPduCfg rxpdu):
+let RxpduUL = rxpdu.canIfRxPduUserRxIndicationUL:
+     switch(RxpduUL)
+     {
+        case "PDUR"   : rxpdu.CanIf_GetPduRRxpduTargetId()
+        case "CAN_NM" : rxpdu.CanIf_GetCanNmRxpduTargetId()
+        case "CAN_TP" : rxpdu.CanIf_GetCanTpRxpduTargetId()
+        case "XCP"    : rxpdu.CanIf_GetXcpRxpduTargetId()
+        case "J1939TP": rxpdu.CanIf_GetJ1939TpRxpduTargetId()
+        case "CAN_TSYN" : rxpdu.CanIf_GetCanTSynRxpduTargetId()
+        case "J1939NM" : rxpdu.J1939Nm_Aspect_generateCanIfRxTrgtPduIdForJ1939NM()
+        case "CDD" : rxpdu.CanIf_GetCddRxpduTargetId()
+        default : rxpdu.canIfRxPduId
+    }
+;
+
+String CanIf_GetPduRRxpduTargetId(CanIfRxPduCfg pdu):
+let pdur = pdu.CanIf_getCanIf().parent.pduR:
+(pdur.pduRRoutingTables.pduRRoutingTable.size>0) &&(pdur.pduRRoutingTables.pduRRoutingTable.pduRRoutingPath.size>0)? 
+"PduRConf_PduRSrcPdu_"+(pdur.pduRRoutingTables.pduRRoutingTable.pduRRoutingPath.pduRSrcPdu.selectFirst(e|e.pduRSrcPduRef.shortName == pdu.canIfRxPduRef.shortName).shortName):pdu.canIfRxPduId
+;
+
+String CanIf_GetCddRxpduTargetId(CanIfRxPduCfg pdu):
+let CDD = pdu.CanIf_getCanIf().parent.cdd.selectFirst(e|e.cddComStackContribution!=null && e.cddComStackContribution.cddComIfUpperLayerContribution!=null && e.cddComStackContribution.cddComIfUpperLayerContribution.cddComIfUpperLayerRxPdu.size>0 && e.cddComStackContribution.cddComIfUpperLayerContribution.cddComIfUpperLayerRxPdu.exists(e|e.cddComIfPduRef.shortName == pdu.canIfRxPduRef.shortName)):
+let Rx_Pdu = (CDD!=null)?CDD.cddComStackContribution.cddComIfUpperLayerContribution.cddComIfUpperLayerRxPdu.selectFirst(e|e.cddComIfPduRef.shortName == pdu.canIfRxPduRef.shortName).shortName:null:
+(Rx_Pdu!=null)?(CDD.shortName+"Conf_CddComIfUpperLayerRxPdu_"+Rx_Pdu): pdu.canIfRxPduId
+;
+
+Integer CanIf_GetCanNmRxpduTargetId(CanIfRxPduCfg pdu):
+let cannm = pdu.CanIf_getCanIf().parent.canNm:
+cannm.canNmGlobalConfig.canNmChannelConfig.canNmRxPdu.selectFirst(e|e.canNmRxPduRef.shortName == pdu.canIfRxPduRef.shortName).canNmRxPduId
+;
+
+String CanIf_GetCanTpRxpduTargetId(CanIfRxPduCfg pdu):
+let cantp = pdu.CanIf_getCanIf().parent.canTp:
+let cantpNpduId = (List[CanTpRxNPdu])(cantp.canTpConfig.canTpChannel.canTpRxNSdu.size >0 ?(cantp.canTpConfig.canTpChannel.select(e|e.canTpRxNSdu.size > 0).canTpRxNSdu.canTpRxNPdu.select(e|e.canTpRxNPduRef.shortName == pdu.canIfRxPduRef.shortName)):{}):
+let canTpFcNpduId = (List[CanTpRxFcNPdu])(cantp.canTpConfig.canTpChannel.canTpTxNSdu.size > 0 ? (cantp.canTpConfig.canTpChannel.select(e|e.canTpTxNSdu.size > 0).canTpTxNSdu.select(e|e.canTpRxFcNPdu != null).canTpRxFcNPdu.select(e|e.canTpRxFcNPduRef == pdu.canIfRxPduRef)):{}):
+"CanTpConf_"+((cantpNpduId != null && cantpNpduId.size >0)? "CanTpRxNPdu_"+cantpNpduId.first().shortName
+: ((canTpFcNpduId !=null && canTpFcNpduId.size>0)? "CanTpRxFcNPdu_"+canTpFcNpduId.first().shortName
+: ""))
+;
+
+String CanIf_GetXcpRxpduTargetId(CanIfRxPduCfg pdu):
+let xcp = pdu.CanIf_getCanIf().parent.xcp:
+"XcpConf_XcpRxPdu_"+(xcp.xcpConfig.xcpTransportLayer.xcpRxPdu.selectFirst(e|e.xcpRxPduRef.shortName == pdu.canIfRxPduRef.shortName).shortName)
+;
+
+String CanIf_GetCanTSynRxpduTargetId(CanIfRxPduCfg pdu):
+let cantsyn = pdu.CanIf_getCanIf().parent.canTSyn:
+let rxpdu = (cantsyn!=null ?(cantsyn.CanIf_getCanTSynRxPduList() != null ? cantsyn.CanIf_getCanTSynRxPduList().selectFirst(tsyncPdu | tsyncPdu.canTSynGlobalTimePduRef == pdu.canIfRxPduRef).shortName : null)
+    : null):
+(rxpdu != null)?"CanTSynConf_CanTSynGlobalTimeSlavePdu_"+rxpdu:null
+;
+
+List[CanTSynGlobalTimeSlavePdu] CanIf_getCanTSynRxPduList(CanTSyn this) :
+((List) (this.canTSynGlobalTimeDomain.sortBy(e|e.shortName).select(e|e.canTSynGlobalTimeSlave != null )).canTSynGlobalTimeSlave.canTSynGlobalTimeSlavePdu)
+;
+
+String CanIf_GetJ1939TpRxpduTargetId(CanIfRxPduCfg pdu):
+let j1939tpCfg = pdu.CanIf_getCanIf().parent.j1939Tp.j1939TpConfiguration:
+((j1939tpCfg.j1939TpRxChannel.j1939TpRxCmNPdu.selectFirst(e|e.j1939TpRxCmNPduRef.shortName == pdu.canIfRxPduRef.shortName) != null)?"J1939TpConf_J1939TpRxCmNPdu_"+j1939tpCfg.j1939TpRxChannel.j1939TpRxCmNPdu.selectFirst(e|e.j1939TpRxCmNPduRef.shortName == pdu.canIfRxPduRef.shortName).shortName:
+((j1939tpCfg.j1939TpRxChannel.j1939TpRxDtNPdu.selectFirst(e|e.j1939TpRxDtNPduRef.shortName == pdu.canIfRxPduRef.shortName) != null)?"J1939TpConf_J1939TpRxDtNPdu_"+j1939tpCfg.j1939TpRxChannel.j1939TpRxDtNPdu.selectFirst(e|e.j1939TpRxDtNPduRef.shortName == pdu.canIfRxPduRef.shortName).shortName:
+((j1939tpCfg.CanIf_j1939TpisRxPduPresent(pdu.canIfRxPduRef.shortName))?"J1939TpConf_J1939TpRxFcNPdu_"+(j1939tpCfg.j1939TpTxChannel.select(e|e.j1939TpRxFcNPdu != null).j1939TpRxFcNPdu.selectFirst(e1|e1.j1939TpRxFcNPduRef.shortName == pdu.canIfRxPduRef.shortName).shortName):
+((j1939tpCfg.CanIf_j1939TpisRxDirectNPduPresent(pdu.canIfRxPduRef.shortName))?"J1939TpConf_J1939TpRxDirectNPdu_"+(j1939tpCfg.j1939TpRxChannel.j1939TpRxPg.select(e|e.j1939TpRxDirectNPdu != null).j1939TpRxDirectNPdu.selectFirst(e1|e1.j1939TpRxDirectNPduRef.shortName == pdu.canIfRxPduRef.shortName).shortName):""))))
+;
+
+
+
+
+/****************************************************************/
+/*Generating TxPduTargetId*/
+
+String CanIf_generateCanIfTxTargetPduId(CanIfTxPduCfg txpdu):
+let TxpduUL = txpdu.canIfTxPduUserTxConfirmationUL:
+     switch(TxpduUL)
+     {
+    case "PDUR"       : (((Autosar)txpdu.eRootContainer).PduR_Aspect_IsZeroCostOperationEnabled()?
+                    txpdu.PduR_Aspect_generateCanIfTargetPduIdInZeroCostSupport():txpdu.
+                    PduR_Aspect_generateCanIfTxTrgtPduIdForPdur())
+    case "CAN_NM"  : txpdu.CanIf_generateCanIfTxTrgtPduIdForNm_notMacro()
+    case "J1939NM"  : txpdu.CanIf_generateCanIfTxTrgtPduIdForJ1939NM_notMacro()
+    case "CAN_TP"  : txpdu.CanIf_generateCanIfTxTrgtPduIdForCanTp()
+    case "CDD"       : txpdu.CanIf_GetCddTxpduTargetId()
+    case "XCP"       : txpdu.Xcp_Aspect_generateCanIfTxTrgtPduIdForXcp()
+    case "J1939TP" :  txpdu.J1939TP_generateCanIfTxTrgtPduIdForJ1939TP()  
+    case "CAN_TSYN": txpdu.CanTSyn_generateCanIfTxTrgtPduIdForCanTSyn()
+    default : null
+
+    }
+;
+
+/*************/
+
+//CanTSyn
+/* This method returns respective Master Pdu shortname of the given TxPdu */
+String CanTSyn_generateCanIfTxTrgtPduIdForCanTSyn(CanIfTxPduCfg this) :
+   let tsync = ((Ecu)(this.parent.parent.parent)).canTSyn:
+   let txpdu = (tsync !=null ?
+   (tsync.CanTSyn_getCanTSynTxPduList() != null ? tsync.CanTSyn_getCanTSynTxPduList().selectFirst(tsyncPdu | tsyncPdu.canTSynGlobalTimePduRef == this.canIfTxPduRef) : null)
+   : null):
+   txpdu != null? "CanTSynConf_CanTSynGlobalTimeMasterPdu_"+CanTSyn_genTxTargetID_ShortName(txpdu) : null
+;
+
+List[CanTSynGlobalTimeMasterPdu] CanTSyn_getCanTSynTxPduList(CanTSyn this) :
+((List) (this.canTSynGlobalTimeDomain.sortBy(e|e.shortName).select(e|e.canTSynGlobalTimeMaster != null).canTSynGlobalTimeMaster.canTSynGlobalTimeMasterPdu))
+;
+
+String CanTSyn_genTxTargetID_ShortName(CanTSynGlobalTimeMasterPdu MaterPdu):
+    MaterPdu.shortName
+;
+
+
+/*Returns the model Ecu object for the given PduRDestPdu */
+cached Ecu CanIf_getEcuFromPduRDestPdu(CanIfTxPduCfg this) :
+    ((Autosar)eRootContainer).ecu
+;
+/* Get all Configured Cdd ModulesName which interacts with Communication Interface */
+cached List[Cdd] CanIf_getCddIfConfigMod(Ecu this):
+let cdds = cdd.select(e|e.Cdd_nullCheckforCddComStackContribution() && e.Cdd_nullCheckforCddPduRUpperLayerContribution()) :
+cdds.exists(e|e != null) ? cdds./*select(e|PduR_checkCddIfConfigInPdurBswMod(this,e.shortName.toUpperCase())).*/sortBy(e|e.shortName) : {}
+;
+
+
+/* Functions for null checks of parameters in Cdd having lower multiplicity as 0 */
+
+Boolean Cdd_nullCheckforCddComStackContribution(Cdd this):
+this.cddComStackContribution != null
+;
+
+Boolean Cdd_nullCheckforCddPduRUpperLayerContribution(Cdd this):
+this.cddComStackContribution.cddPduRUpperLayerContribution != null
+;
+/* Check if CDD module name is configured in PduRBswModules with Communication interface enabled */
+boolean PduR_checkCddIfConfigInPdurBswMod(Ecu this, String modName):
+this.pduR.pduRBswModules.exists(bswmodule|bswmodule.PduR_nullCheckforPduRBswModules() && (bswmodule.pduRUpperModule &&
+bswmodule.pduRCommunicationInterface && bswmodule.shortName.toUpperCase() == modName.toUpperCase()))
+;
+
+
+Boolean PduR_nullCheckforPduRBswModules(PduRBswModules this):
+this != null
+;
+
+String Xcp_generateCanIfTxTrgtPduIdForXcp(CanIfTxPduCfg this):
+    let xcp = ((Autosar)eRootContainer).xcp:
+    (xcp==null) ? 0 : "XcpConf_XcpTxPdu_"+xcp.xcpConfig.xcpTransportLayer.xcpTxPdu.selectFirst(e|e.xcpTxPduRef == canIfTxPduRef).shortName
+;
+
+
+/* Generate target PduIds in CanIf for J1939Tp */
+String J1939TP_generateCanIfTxTrgtPduIdForJ1939TP(CanIfTxPduCfg this)  :
+    let j1939Tp = ((Autosar)eRootContainer).ecu.j1939Tp:
+    j1939Tp.j1939TpConfiguration!=null && j1939Tp.j1939TpConfiguration.j1939TpTxChannel.size > 0 ?(
+    (j1939Tp.j1939TpConfiguration.j1939TpTxChannel.j1939TpTxCmNPdu.selectFirst(e|e.j1939TpTxCmNPduRef == this.canIfTxPduRef) != null)?"J1939TpConf_J1939TpTxCmNPdu_"+(j1939Tp.j1939TpConfiguration.j1939TpTxChannel.j1939TpTxCmNPdu.selectFirst(e|e.j1939TpTxCmNPduRef == this.canIfTxPduRef).shortName):(
+    (j1939Tp.j1939TpConfiguration.j1939TpTxChannel.j1939TpTxDtNPdu.selectFirst(e|e.j1939TpTxDtNPduRef == this.canIfTxPduRef) != null)?"J1939TpConf_J1939TpTxDtNPdu_"+(j1939Tp.j1939TpConfiguration.j1939TpTxChannel.j1939TpTxDtNPdu.selectFirst(e|e.j1939TpTxDtNPduRef == this.canIfTxPduRef).shortName):(
+     (this.j1939Tp_isTxPduPresentinJ1939TpTxFcNPdu_New())?"J1939TpConf_J1939TpTxFcNPdu_"+(j1939Tp.j1939TpConfiguration.j1939TpRxChannel.select(e|e.j1939TpTxFcNPdu != null).j1939TpTxFcNPdu.selectFirst(e1|e1.j1939TpTxFcNPduRef == this.canIfTxPduRef).shortName):(
+    (this.j1939Tp_isTxPduPresentinJ1939TpTxDirectNPdu_New())?"J1939TpConf_J1939TpTxDirectNPdu_"+(j1939Tp.j1939TpConfiguration.j1939TpTxChannel.j1939TpTxPg.select(e|e.j1939TpTxDirectNPdu != null).j1939TpTxDirectNPdu.selectFirst(e1|e1.j1939TpTxDirectNPduRef == this.canIfTxPduRef).shortName):"")))):(
+    (this.j1939Tp_isTxPduPresentinJ1939TpTxFcNPdu_New())?"J1939TpConf_J1939TpTxFcNPdu_"+(j1939Tp.j1939TpConfiguration.j1939TpRxChannel.select(e|e.j1939TpTxFcNPdu != null).j1939TpTxFcNPdu.selectFirst(e1|e1.j1939TpTxFcNPduRef == this.canIfTxPduRef).shortName) : "")
+    
+;
+cached Boolean j1939Tp_isTxPduPresentinJ1939TpTxFcNPdu_New(CanIfTxPduCfg this):
+    let j1939Tp = ((Autosar)eRootContainer).ecu.j1939Tp:
+    j1939Tp.j1939TpConfiguration.j1939TpRxChannel.size > 0 ? (j1939Tp.j1939TpConfiguration.j1939TpRxChannel.exists(e|e.j1939TpTxFcNPdu != null)? (j1939Tp.j1939TpConfiguration.j1939TpRxChannel.select(e|e.j1939TpTxFcNPdu != null).j1939TpTxFcNPdu.exists(e1|e1.j1939TpTxFcNPduRef == this.canIfTxPduRef)):false) : false
+;
+
+cached Boolean j1939Tp_isTxPduPresentinJ1939TpTxDirectNPdu_New(CanIfTxPduCfg this):
+    let j1939Tp = ((Autosar)eRootContainer).ecu.j1939Tp:
+j1939Tp.j1939TpConfiguration.j1939TpTxChannel.j1939TpTxPg.exists(e|e.j1939TpTxDirectNPdu != null)? (j1939Tp.j1939TpConfiguration.j1939TpTxChannel.j1939TpTxPg.select(e|e.j1939TpTxDirectNPdu != null).j1939TpTxDirectNPdu.exists(e1|e1.j1939TpTxDirectNPduRef==this.canIfTxPduRef)):false
+;
+/********/
+/*Check for Zerocost Operation enabled or not */
+Boolean PduR_Aspect_IsZeroCostOperationEnabled(Autosar this):
+this.pduR.pduRGeneral.pduRZeroCostOperation
+;
+
+/*Generate Id in ZeroCost Support */
+String PduR_Aspect_generateCanIfTargetPduIdInZeroCostSupport(CanIfTxPduCfg this):
+let pdur = ((Autosar)this.eRootContainer).pduR:
+pdur.pduRGeneral.pduRZeroCostOperation ? pdur.getAllCanIfOwnedDestPdus(this).generateCanIfTxTargetPduForAll() : null
+;
+
+String CanIf_GetCddTxpduTargetId(CanIfTxPduCfg this):
+let CDD = this.CanIf_getCanIf().parent.cdd.selectFirst(e|e.cddComStackContribution!=null && e.cddComStackContribution.cddComIfUpperLayerContribution!=null && e.cddComStackContribution.cddComIfUpperLayerContribution.cddComIfUpperLayerTxPdu.size>0 && e.cddComStackContribution.cddComIfUpperLayerContribution.cddComIfUpperLayerTxPdu.exists(e|e.cddComIfPduRef.shortName == this.canIfTxPduRef.shortName)):
+let Tx_Pdu = (CDD!=null)?CDD.cddComStackContribution.cddComIfUpperLayerContribution.cddComIfUpperLayerTxPdu.selectFirst(e|e.cddComIfPduRef.shortName == this.canIfTxPduRef.shortName).shortName:null:
+(Tx_Pdu!=null)?(CDD.shortName+"Conf_CddComIfUpperLayerTxPdu_"+Tx_Pdu): this.canIfTxPduId
+;
+
+/*Get List of all Tx RPaths for having DestPdus from CanIf.*/
+List[PduRRoutingPath] getAllCanIfOwnedDestPdus(PduR this, CanIfTxPduCfg txPdu):
+    this.pduRRoutingTables.pduRRoutingTable.exists(e|e.nullCheckforPduRRoutingTable()) && this.pduRRoutingTables.pduRRoutingTable.pduRRoutingPath.exists(e|e.nullCheckforPduRRoutingPath())
+    ? this.pduRRoutingTables.pduRRoutingTable.pduRRoutingPath.select( path |ecu().canIf!=null &&
+    ecu().canIf.canIfInitCfg != null && path.doesCanIfOwnDestPdu(txPdu)).get(0) : {}
+;
+private Boolean nullCheckforPduRRoutingTable(PduRRoutingTable this):
+this != null 
+;
+
+private Boolean nullCheckforPduRRoutingPath(PduRRoutingPath this):
+this != null 
+;
+/* Returns true if the Pdu in pduRDestPdu is referred in CanIfTxPduCfg*/
+boolean doesCanIfOwnDestPdu (PduRRoutingPath this,CanIfTxPduCfg txPdu ) :
+getCanIfTxPduId(txPdu) !=null
+;
+/*Returns the model Ecu object for the PduR */
+Ecu ecu(PduR this) :
+    (Ecu) eContainer
+;
+
+/* Returns CanIfTxPduId for the Pdu in pduRDestPdu if referred in CanIfTxPduCfg*/
+cached Integer getCanIfTxPduId (PduRRoutingPath this,CanIfTxPduCfg txPdu ) :
+    (txPdu.canIfTxPduRef != null && this.pduRDestPdu.pduRDestPduRef != null &&
+this.pduRDestPdu.exists(e|e.pduRDestPduRef == txPdu.canIfTxPduRef))? txPdu.canIfTxPduId : null
+;
+
+String generateCanIfTxTargetPduForAll(PduRRoutingPath this):
+let ComTxIpduList = this.getComFromRPath().comConfig.comIPdu.select(e|e.comIPduDirection.toString() == ("SEND")):
+let ComTxIpduHandleId = ComTxIpduList.selectFirst(e|e.comPduIdRef == pduRSrcPdu.pduRSrcPduRef).comIPduHandleId:
+let ComTxIpduShortName = ComTxIpduList.selectFirst(e|e.comPduIdRef == pduRSrcPdu.pduRSrcPduRef).shortName:
+let canIfTargetTxPdu  = this.getCanIfFromRPath().canIfInitCfg.canIfTxPduCfg.select(txConfig|txConfig.canIfTxPduRef != null      &&
+                                                         pduRDestPdu.pduRDestPduRef != null &&
+                                                         pduRDestPdu.exists(e1|e1.pduRDestPduRef == txConfig.canIfTxPduRef)):
+(canIfTargetTxPdu != null &&  ComTxIpduHandleId != null )?
+
+"PduRConf_PduRSrcPdu_"+ComTxIpduShortName : null
+;
+
+
+/*Returns the model Com object for the RoutingPath */
+Com getComFromRPath(PduRRoutingPath this) :
+    ((Autosar)eRootContainer).ecu.com
+;
+
+/*Returns the model CanIf object for the RoutingPath */
+CanIf getCanIfFromRPath(PduRRoutingPath this) :
+    ((Autosar)eRootContainer).ecu.canIf
+;
+
+/*Get Tx Target Id from PduR  */
+String PduR_Aspect_generateCanIfTxTrgtPduIdForPdur(CanIfTxPduCfg this):
+((Ecu)(this.eRootContainer)).pduR.getAllCanIfOwnedDestPdus(this).returnTxPduPduRDestPdushortName(this)
+;
+
+/*Return Tx Dest HandleId */
+String returnTxPduPduRDestPdushortName(PduRRoutingPath this, CanIfTxPduCfg txPdu):
+"PduRConf_PduRDestPdu_"+(this.pduRDestPdu.selectFirst(e|e.pduRDestPduRef == txPdu.canIfTxPduRef).shortName)
+
+;
+/*********/
+//CAN_NM
+String CanIf_generateCanIfTxTrgtPduIdForNm(CanIfTxPduCfg this):
+    let cannm = ((Autosar)eRootContainer).ecu.canNm:
+    cannm.canNmGlobalConfig!=null && cannm.canNmGlobalConfig.canNmChannelConfig.size > 0?
+    "CanNmConf_CanNmTxPdu_"+cannm.canNmGlobalConfig.canNmChannelConfig.selectFirst(e| e.canNmTxPdu != null && e.canNmTxPdu.canNmTxPduRef == this.canIfTxPduRef).canNmTxPdu.shortName : "CanIfConf_CanIfTxPduCfg_"+this.shortName
+;
+
+String CanIf_generateCanIfTxTrgtPduIdForNm_notMacro(CanIfTxPduCfg this):
+    let cannm = ((Autosar)eRootContainer).ecu.canNm:
+    cannm.canNmGlobalConfig!=null && cannm.canNmGlobalConfig.canNmChannelConfig.size > 0?
+    cannm.canNmGlobalConfig.canNmChannelConfig.selectFirst(e| e.canNmTxPdu != null && e.canNmTxPdu.canNmTxPduRef == this.canIfTxPduRef).canNmTxPdu.canNmTxConfirmationPduId : "CanIfConf_CanIfTxPduCfg_"+this.shortName
+;
+
+
+
+/* Generate CanIf Tx Target PDU ID for the given CanIfTxPduCfg */
+String CanIf_generateCanIfTxTrgtPduIdForJ1939NM(CanIfTxPduCfg this)    :
+    let j1939nm = ((Autosar)eRootContainer).ecu.j1939Nm:
+    
+    j1939nm.j1939NmConfigSet!=null && j1939nm.j1939NmConfigSet.j1939NmChannel.size>0?
+    "J1939NmConf_J1939NmTxPdu_"+j1939nm.j1939NmConfigSet.j1939NmChannel.selectFirst(e|e.j1939NmTxPdu != null && e.j1939NmTxPdu.j1939NmTxPduRef != null
+    && e.j1939NmTxPdu.j1939NmTxPduRef == this.canIfTxPduRef).j1939NmTxPdu.shortName : "CanIfConf_CanIfTxPduCfg_"+this.shortName
+;
+
+String CanIf_generateCanIfTxTrgtPduIdForJ1939NM_notMacro(CanIfTxPduCfg this)    :
+    let j1939nm = ((Autosar)eRootContainer).ecu.j1939Nm:
+    
+    j1939nm.j1939NmConfigSet!=null && j1939nm.j1939NmConfigSet.j1939NmChannel.size>0?
+    j1939nm.j1939NmConfigSet.j1939NmChannel.selectFirst(e|e.j1939NmTxPdu != null && e.j1939NmTxPdu.j1939NmTxPduRef != null
+    && e.j1939NmTxPdu.j1939NmTxPduRef == this.canIfTxPduRef).j1939NmTxPdu.j1939NmTxPduId : "CanIfConf_CanIfTxPduCfg_"+this.shortName
+;
+
+
+/* CanTp */
+String CanIf_generateCanIfTxTrgtPduIdForCanTp(CanIfTxPduCfg this):
+
+    let cantp = ((Autosar)eRootContainer).ecu.canTp:
+    let canTpChannelList = (cantp.canTpConfig.canTpChannel.select(e|e.canTpTxNSdu.size > 0)):
+    let canTpTxChnlId = (List[CanTpTxNSdu])(canTpChannelList.size >0? (canTpChannelList.canTpTxNSdu.select(e|e.canTpTxNPdu.canTpTxNPduRef.shortName == this.canIfTxPduRef.shortName)):{}):
+    let canTpRxChnlId = (List[CanTpRxNSdu])((cantp.canTpConfig.canTpChannel.canTpRxNSdu.size >0) ? (cantp.canTpConfig.canTpChannel.select(e|e.canTpRxNSdu.size > 0).canTpRxNSdu.select(e|e.canTpTxFcNPdu!=null && e.canTpTxFcNPdu.canTpTxFcNPduRef == this.canIfTxPduRef)):{}):
+    
+    (cantp==null)
+    ? ""
+    :((canTpTxChnlId!=null && canTpTxChnlId.size >0) ? "CanTpConf_CanTpTxNPdu_"+canTpTxChnlId.first().canTpTxNPdu.shortName : (canTpRxChnlId!=null && canTpRxChnlId.size>0  ? "CanTpConf_CanTpTxFcNPdu_"+canTpRxChnlId.first().canTpTxFcNPdu.shortName : ""))
+
+;
+/*Function to print CanTp Pdu Target Id Macros for Tx */
+String getTxTrgtIdFromCantp(CanTp this,CanIfTxPduCfg txPdu):
+    let canTpChannelList = (canTpConfig.canTpChannel.select(e|e.canTpTxNSdu.size > 0)):
+    let canTpTxChnlId = (List[CanTpTxNSdu])(canTpChannelList.size >0? (canTpChannelList.canTpTxNSdu.select(e|e.canTpTxNPdu.canTpTxNPduRef.shortName == txPdu.canIfTxPduRef.shortName)):{}):
+    let canTpRxChnlId = (List[CanTpRxNSdu])((canTpConfig.canTpChannel.canTpRxNSdu.size >0) ? (canTpConfig.canTpChannel.select(e|e.canTpRxNSdu.size > 0).canTpRxNSdu.select(e|e.canTpTxFcNPdu!=null && e.canTpTxFcNPdu.canTpTxFcNPduRef == txPdu.canIfTxPduRef)):{}):
+    (canTpTxChnlId!=null && canTpTxChnlId.size >0) ? "CanTpConf_CanTpTxNPdu_"+canTpTxChnlId.first().canTpTxNPdu.shortName : (canTpRxChnlId!=null && canTpRxChnlId.size>0  ? "CanTpConf_CanTpTxFcNPdu_"+canTpRxChnlId.first().canTpTxFcNPdu.shortName : "")
+;
+
+
+/***********************/
+
+/*****************************/
+
+
+List[CanTSynGlobalTimeSlavePdu] CanIf_getCanTSynRxPduList(CanTSyn this) :
+((List) (this.canTSynGlobalTimeDomain.sortBy(e|e.shortName).select(e|e.canTSynGlobalTimeSlave != null )).canTSynGlobalTimeSlave.canTSynGlobalTimeSlavePdu)
+;
+
+Boolean CanIf_j1939TpisRxPduPresent(J1939TpConfiguration this, String RxPduRef):
+this.j1939TpTxChannel.size >0? (this.j1939TpTxChannel.exists(e|e.j1939TpRxFcNPdu != null)? (this.j1939TpTxChannel.select(e|e.j1939TpRxFcNPdu != null).j1939TpRxFcNPdu.exists(e1|e1.j1939TpRxFcNPduRef.shortName == RxPduRef)):false):false
+;
+
+Boolean CanIf_j1939TpisRxDirectNPduPresent(J1939TpConfiguration this, String RxPduRef):
+this.j1939TpRxChannel.j1939TpRxPg.exists(e|e.j1939TpRxDirectNPdu != null)? (this.j1939TpRxChannel.j1939TpRxPg.select(e|e.j1939TpRxDirectNPdu != null).j1939TpRxDirectNPdu.exists(e1|e1.j1939TpRxDirectNPduRef.shortName == RxPduRef)):false
+;
+
+
+
+/****************************************************************/
+
+/*Function checks if only one Rxpdu is refering the Hrh */
+Boolean CanIf_isOlyOneRxPduRefHrh(CanIfHrhCfg this) :
+this.parent.parent.canIfRxPduCfg.select(e|e.canIfRxPduHrhIdRef.shortName==this.shortName).size==1
+;
+/*Function checks if Rxpdus refering to Hrh has canIfRxPduCanIdRange configured */
+Boolean CanIf_isRxPduhasRangCfg(CanIfHrhCfg this) :
+this.parent.parent.canIfRxPduCfg.select(e|e.canIfRxPduHrhIdRef.shortName==this.shortName).exists(e|e.canIfRxPduCanIdRange !=null)
+;
+/*Function checks if Rxpdus refering to Hrh has canIfRxPduCanIdRange configured */
+Boolean CanIf_isHrhhasRangCfg(CanIfHrhCfg this) :
+this.canIfHrhRangeCfg!= null && this.canIfHrhRangeCfg.canIfHrhRangeRxPduLowerCanId !=null
+;
+/*Function checks if Rxpdus refering to Hrh has canIfRxPduCanIdRange configured 
+Function returns true if range of rxpdu is greater than hrh
+returns false if range of rxpdu is within hrh range*/
+Boolean CanIf_isRxPduhasRangBeyondHrhRange(CanIfHrhCfg this) :
+let Rxpdu = this.parent.parent.canIfRxPduCfg.select(e|e.canIfRxPduHrhIdRef.shortName==this.shortName):
+(Rxpdu.exists(e|(e.canIfRxPduCanIdRange != null && e.canIfRxPduCanIdRange.canIfRxPduCanIdRangeLowerCanId>=this.canIfHrhRangeCfg.canIfHrhRangeRxPduLowerCanId && 
+e.canIfRxPduCanIdRange.canIfRxPduCanIdRangeUpperCanId<= this.canIfHrhRangeCfg.canIfHrhRangeRxPduUpperCanId)))?Rxpdu.exists(e1|(e1.canIfRxPduCanIdRange == null && e1.canIfRxPduCanId>=this.canIfHrhRangeCfg.canIfHrhRangeRxPduLowerCanId && e1.canIfRxPduCanId<=this.canIfHrhRangeCfg.canIfHrhRangeRxPduUpperCanId)):false
+;
+
+/*Function returns true if more than one Rxpdu is refering the Hrh */
+Boolean CanIf_isHrhMultiplexed(CanIfHrhCfg this) :
+this.parent.parent.canIfRxPduCfg.select(e|e.canIfRxPduHrhIdRef.shortName==this.shortName).size>1
+;
+
+
+String CanIf_getEditorVersion() : GLOBALVAR editor_ver;
+
+
+ /*This method returns the Pdu type, to be printed in canif_cfg.c file*/
+String CanIf_getTxPdutype( String string ) :
+  switch(string){
+  case CanIf_STATIC(): CANIF_STATIC()
+  default : CANIF_STATIC()
+ }
+;
+
+ /*This method returns the Receive Pdu type, to be printed in canif_cfg.c file*/
+String CanIf_getRxPdutype( String string ) :
+  switch(string){
+  case CanIf_STATIC(): CANIF_STATIC()
+  default : CANIF_STATIC()
+ }
+;
+
+ /*This method returns the Hrh type, to be printed in canif_cfg.c file*/
+ private String CanIf_getHrhType( String userType )  :
+  switch(userType){
+  case CanIf_FULL_CAN(): CanIf_CAN_FULL()
+  default : CanIf_CAN_BASIC()
+ }
+ ;
+
+
+/* This method returns the information about the HRH to be printed in the HRH Config table in canif_cfg.c file*/
+private String CanIf_getType( String hrhInfo ) :
+  switch(hrhInfo){
+  case "ListSwOn": "CANIF_BASIC_LIST_SFON"
+  case "RangeSwOnSinTgt": "CANIF_BASIC_RANGE_SFON_SINTGT"
+  case "RangeSwOnMulTgt": "CANIF_BASIC_RANGE_SFON_MULTGT"
+  default :  CanIf_EMPTY_STRING()
+ }
+;
+ /*This method returns the readdata configuration to be printed in canif_cfg.c file*/
+String CanIf_getDataNotifInfo( CanIfHrhCfg this, List[CanIfRxPduCfg] RxPdu ) :
+  if( RxPdu.exists(e|e.canIfRxPduReadData) && RxPdu.exists(e|e.canIfRxPduReadNotifyStatus) &&
+  ((CanIf)this.parent.parent.parent).canIfPublicCfg.canIfPublicReadRxPduDataApi &&
+   ((CanIf)this.parent.parent.parent).canIfPublicCfg.canIfPublicReadRxPduNotifyStatusApi)
+  then (CanIf_getHrh("BothStatusData"))
+  else if(RxPdu.exists(e|e.canIfRxPduReadNotifyStatus) && ((CanIf)this.parent.parent.parent)
+  .canIfPublicCfg.canIfPublicReadRxPduNotifyStatusApi)
+  then (CanIf_getHrh("OnlyStatus"))
+  else if(RxPdu.exists(e|e.canIfRxPduReadData) && ((CanIf)this.parent.parent.parent)
+  .canIfPublicCfg.canIfPublicReadRxPduDataApi)
+  then (CanIf_getHrh("OnlyData"))
+  else (CanIf_getHrh("None"))
+;
+
+ /*This method returns the readdata and read notification status configuration to be printed in canif_cfg.c file*/
+private String CanIf_getHrh( String readInfo ) :
+  switch(readInfo){
+  case "BothStatusData": "CANIF_READ_NOTIFSTATUS_DATA"
+  case "None": "CANIF_READ_NONE"
+  case "OnlyData": "CANIF_READ_DATA"
+  case "OnlyStatus": "CANIF_READ_NOTIFSTATUS"
+  default :  CanIf_EMPTY_STRING()
+ }
+;
+
+
+ /*This method adds one to the passed value, and returns back the computed value*/
+Integer CanIf_incrementInt(Integer existing, Integer inc) :
+   existing + inc + 1
+;
+
+
+/* Sorts a list of CanHardwareObject by the dir(RX/TX) membership. */
+cached List[CanIfRxPduCfg] CanIf_sortByRxIds(List[CanIfRxPduCfg] this) :
+    this.sortBy(e|e.canIfRxPduId)
+;
+
+cached List[CanIfRxPduCfg] CanIf_sortRxPduIdByHrhIds(List[CanIfRxPduCfg] this) :
+    this.sortBy(e|e.canIfRxPduHrhIdRef.canIfHrhIdSymRef.canObjectId)
+;
+
+/* Sorts a list of CanHardwareObject by the dir(RX/TX) membership. */
+List[CanIfHrhCfg] CanIf_sortByHrhIds(List[CanIfHrhCfg] this) :
+    this.select(e|e.canIfHrhIdSymRef != null).sortBy(e|e.canIfHrhIdSymRef.canObjectId)
+;
+
+/* Sorts a list of CanIds by the dir(RX/TX) membership. */
+private List[CanIfHrhListCfg] CanIf_sortByCanIds(List[CanIfHrhListCfg] this) :
+    this.sortBy(e|e.canIfHrhListCanId)
+;
+
+
+List[CanIfTxPduCfg] CanIf_sortByTxIds_1(List[CanIfTxPduCfg] this) :
+this.sortBy(e| (e.canIfTxPduId))
+;
+
+
+List[CanIfCtrlCfg] CanIf_sortByCtrlIds(List[CanIfCtrlCfg] this) :
+this.sortBy(e| (e.canIfCtrlId))
+;
+
+List[CanIfTrcvCfg] CanIf_sortByTrcvIds(List[CanIfTrcvCfg] this) :
+this.sortBy(e| (e.canIfTrcvId))
+;
+
+
+
+/* FC_VariationPoint_START */
+/* The macro CANIF_FD_SUPPORT is set to TRUE/STD_ON, if atleast for one of the controllers configured there is a FDbaud
+   rate container configured */
+/* This is across ALL the config sets. Hence the the context is taken as CanIfPublicCfg */
+String CanIf_isCanFDSupported(CanIfPublicCfg this):
+(CanControllerBaudrateConfig.getProperty("canControllerFdBaudrateConfig") != null) &&
+(((CanIf)this.parent).canIfCtrlDrvCfg.canIfCtrlCfg.select(e|e.canIfCtrlCanCtrlRef.canControllerBaudrateConfig.select(e|e.canControllerFdBaudrateConfig != null).size > 0).size > 0)
+?"STD_ON":"STD_OFF";
+/* FC_VariationPoint_END */
+
+/* FC_VariationPoint_START */
+/* The macro CANIF_FD_SUPPORT is set to TRUE/STD_ON, if atleast for one of the controllers configured there is a FDbaud
+   rate container configured */
+/* This is across ALL the config sets. Hence the the context is taken as CanIfPublicCfg */
+
+boolean CanIf_CanFDSupported(CanIfPublicCfg this):
+(CanControllerBaudrateConfig.getProperty("canControllerFdBaudrateConfig") != null) &&
+(((CanIf)this.parent).canIfCtrlDrvCfg.canIfCtrlCfg.select(e|e.canIfCtrlCanCtrlRef.canControllerBaudrateConfig.select(e|e.canControllerFdBaudrateConfig != null).size > 0).size > 0)
+;
+
+/* FC_VariationPoint_END */
+
+
+
+
+
+Boolean CanIf_isBasicCanSupported(CanIf this):
+this.setProperty("IsBasicCanSupport", 0)->
+this.CanIf_getVariantsUniqueOrCommon().forAll(var|this.CanIf_selectVariantNotExclusive(var)->
+this.canIfInitCfg.canIfInitHohCfg.canIfHrhCfg.exists(e|e.canIfHrhIdSymRef.canHandleType == "BASIC")?this.setProperty("IsBasicCanSupport", 1):null->
+this.CanIf_deselectVariant()->
+true)->
+if( this.getProperty("IsBasicCanSupport") == 1 ) then true else false
+;
+
+
+Boolean CanIf_isRxPduReadDataSupported(CanIf this):
+this.setProperty("isRxPduReadDataSupported", 0)->
+this.CanIf_getVariantsUniqueOrCommon().forAll(var|this.CanIf_selectVariantNotExclusive(var)->
+this.canIfInitCfg.canIfRxPduCfg.exists(e|e.canIfRxPduReadData)?this.setProperty("isRxPduReadDataSupported", 1):null->
+this.CanIf_deselectVariant()->
+true)->
+if( this.getProperty("isRxPduReadDataSupported") == 1 ) then true else false
+;
+
+/* extensions for generating PduIdx */
+private Integer CanIf_getPduIdx( CanIfRxPduCfg this, List[CanIfRxPduCfg] allRxPduConfigs) :
+  allRxPduConfigs.indexOf(CanIf_getSimilarHrhConfigs(allRxPduConfigs).get(0))
+;
+
+private cached CanIf_getSimilarHrhConfigs( CanIfRxPduCfg this, List[CanIfRxPduCfg] allRxPduConfigs ) :
+  allRxPduConfigs.select(e | e.canIfRxPduHrhIdRef == canIfRxPduHrhIdRef)
+;
+
+
+
+
+
+
+private List[String] CanIf_addCbks(String cbk, List[String] cbks) :
+cbks.contains(cbk)? cbks : ((cbk != "")? cbks.add(cbk) : cbks)
+;
+
+
+private CanIf_getcanifcbk1list(CanIfInitCfg this) :
+   CanIf_sortByRxIds(canIfRxPduCfg).select(rxPdu | (rxPdu.canIfRxPduUserRxIndicationUL != ""
+                                            && rxPdu.canIfRxPduUserRxIndicationUL != null
+                                            && rxPdu.canIfRxPduUserRxIndicationUL != "CAN_TP"))
+;
+
+
+/* get the Pdu Index in the CanId list config table */
+Integer CanIf_getPduIdx2(CanIfHrhCfg this, Integer canId) :
+   CanIf_sortRxPduIdByHrhIds(CanIf_canIfRxPdusOnHrhConfig())
+   .indexOf(CanIf_canIfRxPdusOnHrhConfig().selectFirst(e|e.canIfRxPduHrhIdRef == this &&
+                                               e.canIfRxPduCanIdRange != null && e.canIfRxPduCanIdRange.canIfRxPduCanIdRangeLowerCanId == canId))
+;
+
+
+/* get the Pdu Index in the HRH config table */
+Integer CanIf_getPduIdx2(CanIfHrhCfg this) :
+   CanIf_sortByRxIds(CanIf_canIfRxPdusOnHrhConfig()).indexOf(CanIf_canIfRxPdusOnHrhConfig().canIfRxPduHrhIdRef == this)
+;
+
+/* Method to get the list of sorted CanIds */
+private List[CanIfRxPduCfg] CanIf_sortOnCanIds(List[CanIfRxPduCfg] rxPdus) :
+   rxPdus.sortBy(e|e.canIfRxPduCanId)
+;
+
+
+/* method to get the list of RxPdus for the given HRH list, it will give duplicate elements also*/
+List[CanIfRxPduCfg] CanIf_getRxPdusMappedToHrhList(List[CanIfHrhCfg] hrhlist):
+   let SelectedRxPdus = { } :
+   hrhlist.forAll(e | SelectedRxPdus.addAll(CanIf_sortOnCanIds(e.CanIf_canIfRxPdusOnHrhConfig())
+   .select(RxPdu | RxPdu.canIfRxPduHrhIdRef== e))->true )->
+   SelectedRxPdus
+;
+
+/* Method to get the complete list of all RxPdus */
+CanIf_addRxPdus(List[CanIfRxPduCfg] rxPdus, List list) :
+   list.addAll(rxPdus) -> true
+;
+
+
+/* Method to check if Hrh list is present*/
+private Boolean CanIf_isHrhListPresent(CanIfInitCfg this) :
+(this.canIfInitHohCfg.get(0).canIfHrhCfg.exists(e|e.canIfHrhListCfg!=null))
+;
+
+/* Method to check if Basic Can list is supported. Atleast one HRH with LIST must be configured*/
+String CanIf_isBasicCanListSupported(CanIf this):
+  (this.canIfInitCfg.canIfInitHohCfg.canIfHrhCfg.exists(e|e.canIfHrhListCfg!=null))?"STD_ON":"STD_OFF"
+;
+
+/* Function checks if BASIC Can HRH is configured*/
+String CanIf_isBasicCanRangeSupported(CanIf this):
+(this.canIfInitCfg.canIfInitHohCfg.canIfHrhCfg.exists(e|CanIf_iscanifHrhRangePresent(e)))?"STD_ON":"STD_OFF"
+;
+
+/*Function checks if the given HRH is referred in more than 1 Rx-Pdu*/
+Boolean CanIf_iscanifHrhRangePresent(CanIfHrhCfg this) :
+this.setProperty("IsHrhRangePresent", 0)->
+this.CanIf_getCanIf().CanIf_getVariantsUniqueOrCommon().forAll(var|this.CanIf_getCanIf().CanIf_selectVariantNotExclusive(var)->
+((this.canIfHrhRangeCfg != null) && (((CanIfInitCfg)this.parent.parent).canIfRxPduCfg.canIfRxPduHrhIdRef.shortName == this.shortName))?this.setProperty("IsHrhRangePresent", 1):null->
+this.CanIf_getCanIf().CanIf_deselectVariant()->
+true)->
+if( this.getProperty("IsHrhRangePresent") == 1 ) then true else false
+;
+
+
+/*Returns how many number of CanIfRxPduCfgs are referring the given HRH*/
+cached Integer CanIf_getNumRanges(CanIfHrhCfg this) :
+((CanIfInitCfg)this.parent.parent).canIfRxPduCfg.select(e|e.canIfRxPduHrhIdRef.shortName == this.shortName).size
+;
+
+/*These are required for generating the macro CANIF_CANNM_TXID_FILTER. Hence all the config sets are considered*/
+/*--------------------------------------------------------------------------------------------------------------*/
+/* Method to check whether cannmtxidfilter is required.
+This is required to set the macro CANIF_CANNM_TXID_FILTER*/
+
+Boolean CanIf_checknmtxidfilter_AllConfigSets(CanIf this):
+let cannmrxlist={}:
+cannmrxlist.addAll(CanIf_preparerange_ForAllConfigSets(this))->
+this.canIfInitCfg.canIfTxPduCfg.exists(e|(e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "CAN_NM"
+&& cannmrxlist.contains(e.canIfTxPduCanId) )   )
+;
+
+
+/*Prepare the List of RxCanIds where the RxUser CAN_NM and a HRH range is present.
+This is to set the macro CANIF_CANNM_TXID_FILTER */
+private List[Integer] CanIf_preparerange_ForAllConfigSets(CanIf this):
+    let cannmrxlist = {}:
+    /* Add CanIds to the list where the RxUser is CanNm and the HRH is of type BASIC
+    and this HRH is referenced in one RxPdu only (SINGLE TARGET)   */
+    if this.canIfInitCfg.canIfRxPduCfg.exists(e|(e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL
+    .toUpperCase() == "CAN_NM" && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg != null &&
+      e.canIfRxPduHrhIdRef.CanIf_getNumRanges()==1)) then
+    CanIf_addrangeforHrh(cannmrxlist)->
+    /* Add CanIds to the list where the RxUser is CanNm and the HRH is of type
+     BASIC and this HRH is referenced in more than one RxPdu and the sub-container
+      CanIfCanRxPduCanIdRange is not configured (MULTIPLE TARGET)   */
+    if this.canIfInitCfg.canIfRxPduCfg.exists(e|(e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL
+    .toUpperCase() == "CAN_NM" && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg != null  &&
+     e.canIfRxPduCanIdRange == null &&  e.canIfRxPduHrhIdRef.CanIf_getNumRanges()>1)) then
+    CanIf_addtoListfromCanIfRxPduCanId(cannmrxlist)->
+    /* Add CanIds to the list where the RxUser is CanNm and the HRH is of type
+     BASIC and this HRH is referenced in more than one RxPdu and the sub-container
+      CanIfCanRxPduCanIdRange is configured (MULTIPLE TARGET)   */
+    if this.canIfInitCfg.canIfRxPduCfg.exists(e|(e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL
+    .toUpperCase() == "CAN_NM" && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg != null &&
+     e.canIfRxPduCanIdRange != null)) then
+    CanIf_addrangefromRxPduCfg(cannmrxlist)->
+    cannmrxlist
+;
+
+/*Prepare the list for each HRH range where the RxUser is CAN_NM */
+private CanIf_addrangeforHrh(CanIf this, List[Integer] cannmrxlist):
+let rxpdus = this.canIfInitCfg.canIfRxPduCfg.select(e|(e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL
+.toUpperCase() == "CAN_NM" && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg != null)):
+rxpdus.canIfRxPduHrhIdRef.canIfHrhRangeCfg.forAll(e1| CanIf_addranges(e1,cannmrxlist))
+;
+CanIf_addranges(CanIfHrhRangeCfg hrhRange, List[Integer] cannmrxlist):
+CanIf_addCanIds(hrhRange.canIfHrhRangeRxPduLowerCanId,hrhRange.canIfHrhRangeRxPduUpperCanId,cannmrxlist)->
+true
+;
+
+CanIf_addrangefromRxPduCfg(CanIf this, List[Integer] cannmrxlist):
+    this.canIfInitCfg.canIfRxPduCfg.select(e|e.canIfRxPduCanIdRange!= null).canIfRxPduCanIdRange
+    .forAll(e1|CanIf_addRangefromCanIfRange(e1, cannmrxlist))
+;
+
+private CanIf_addRangefromCanIfRange(CanIfRxPduCanIdRange hrhRange, List[Integer] cannmrxlist):
+    CanIf_addCanIds(hrhRange.canIfRxPduCanIdRangeLowerCanId, hrhRange.canIfRxPduCanIdRangeUpperCanId, cannmrxlist)->
+    true
+;
+
+private CanIf_addtoListfromCanIfRxPduCanId(CanIf this, List[Integer] cannmrxlist):
+    this.canIfInitCfg.canIfRxPduCfg.forAll(e|CanIf_addCanIdtoList(e,cannmrxlist))
+;
+
+private CanIf_addCanIdtoList(CanIfRxPduCfg rpducfg, List[Integer] cannmrxlist):
+    if rpducfg.canIfRxPduCanIdRange == null && rpducfg.canIfRxPduHrhIdRef.canIfHrhRangeCfg != null &&
+    rpducfg.canIfRxPduUserRxIndicationUL != null && rpducfg.canIfRxPduUserRxIndicationUL.toUpperCase() == "CAN_NM"
+    then CanIf_addElement1(rpducfg.canIfRxPduCanId,cannmrxlist)->
+    true
+;
+CanIf_addElement1(Integer e, List[Integer] cannmrxlist):
+    cannmrxlist.add(e)
+;
+
+
+
+/*This method adds all the integers within the 'start' and 'end' (including 'start' and 'end') to the list cannmrxlist */
+private CanIf_addCanIds(Integer start, Integer end, List[Integer] cannmrxlist): 
+    let tempList = start.upTo(end):
+    tempList.select(e|cannmrxlist.add(e))
+;
+/*--------------------------------------------------------------------------------------------------------------*/
+
+
+
+/* Method to check whether cannmtxidfilter is required.
+This is required to generate CanIf_CanNmTxId[] per config set. These are essentially the same functions
+as above, but modified to iterate only for the given CanIf config set*/
+/*--------------------------------------------------------------------------------------------------------------*/
+Boolean CanIf_checknmtxidfilter_PerConfigSets(CanIfInitCfg this):
+let cannmrxlist={}:
+cannmrxlist.addAll(CanIf_preparerange_PerConfigSet(this))->
+this.canIfTxPduCfg.exists(e|(e.canIfTxPduUserTxConfirmationUL != null && e.canIfTxPduUserTxConfirmationUL == "CAN_NM" && e.canIfTxPduCanId !=null
+&& cannmrxlist.contains(e.canIfTxPduCanId)))
+;
+
+
+/*Prepare the List of RxCanIds where the RxUser CAN_NM and a HRH range is present.
+This is to set the macro CANIF_CANNM_TXID_FILTER */
+private List[Integer] CanIf_preparerange_PerConfigSet(CanIfInitCfg this):
+    let cannmrxlist = {}:
+    /* Add CanIds to the list where the RxUser is CanNm and the HRH is of type BASIC
+    and this HRH is referenced in one RxPdu only (SINGLE TARGET)   */
+    if this.canIfRxPduCfg.exists(e|(e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL == "CAN_NM" && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg != null &&
+      e.canIfRxPduHrhIdRef.CanIf_getNumRanges()==1 && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg.canIfHrhRangeRxPduLowerCanId !=null)) then
+    CanIf_addrangeforHrh_PerConfigSet(cannmrxlist)->
+    /* Add CanIds to the list where the RxUser is CanNm and the HRH is of type
+     BASIC and this HRH is referenced in more than one RxPdu and the sub-container
+      CanIfCanRxPduCanIdRange is not configured (MULTIPLE TARGET)   */
+    if this.canIfRxPduCfg.exists(e|(e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL
+    .toUpperCase() == "CAN_NM" && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg != null  &&
+     e.canIfRxPduCanIdRange == null &&  e.canIfRxPduHrhIdRef.CanIf_getNumRanges()>1 && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg.canIfHrhRangeRxPduLowerCanId!=null)) then
+    CanIf_addtoListfromCanIfRxPduCanId_PerConfigSet(cannmrxlist)->
+    /* Add CanIds to the list where the RxUser is CanNm and the HRH is of type
+     BASIC and this HRH is referenced in more than one RxPdu and the sub-container
+      CanIfCanRxPduCanIdRange is configured (MULTIPLE TARGET)   */
+    if this.canIfRxPduCfg.exists(e|(e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL
+    .toUpperCase() == "CAN_NM" && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg != null  &&
+     e.canIfRxPduCanIdRange != null)) then
+    CanIf_addrangefromRxPduCfg_PerConfigSet(cannmrxlist)->
+    cannmrxlist
+;
+
+/*Prepare the list for each HRH range where the RxUser is CAN_NM */
+private CanIf_addrangeforHrh_PerConfigSet(CanIfInitCfg this, List[Integer] cannmrxlist):
+let rxpdus = this.canIfRxPduCfg.select(e|(e.canIfRxPduUserRxIndicationUL != null && e.canIfRxPduUserRxIndicationUL
+.toUpperCase() == "CAN_NM" && e.canIfRxPduHrhIdRef.canIfHrhRangeCfg !=null)):
+rxpdus.canIfRxPduHrhIdRef.canIfHrhRangeCfg.forAll(e1| CanIf_addranges(e1,cannmrxlist))
+;
+
+private CanIf_addtoListfromCanIfRxPduCanId_PerConfigSet(CanIfInitCfg this, List[Integer] cannmrxlist):
+    this.canIfRxPduCfg.forAll(e|CanIf_addCanIdtoList(e,cannmrxlist))
+;
+
+CanIf_addrangefromRxPduCfg_PerConfigSet(CanIfInitCfg this, List[Integer] cannmrxlist):
+    this.canIfRxPduCfg.select(e|e.canIfRxPduCanIdRange!= null).canIfRxPduCanIdRange
+    .forAll(e1|CanIf_addRangefromCanIfRange(e1, cannmrxlist))
+;
+/*--------------------------------------------------------------------------------------------------------------*/
+
+
+
+/*----------------------------------------------------------------*/
+
+/* Generate Target PduIds */
+/*
+1. Get the user type
+2. Call the appropriate extension
+3. Fetch the Id as configured in the UL
+*/
+
+/***************************************************************************************************
+* CanIf General helper functions
+***************************************************************************************************/
+/*Returns the model CanIf. */
+CanIf CanIf_getCanIf(EObject this) :
+    ((Autosar)eRootContainer).ecu.canIf
+;
+
+/* Obtain canIfHrhCfg from canif*/
+List[CanIfHrhCfg] CanIf_GetcanIfHrhCfg(CanIf this):
+this.canIfInitCfg.canIfInitHohCfg.canIfHrhCfg
+;
+
+/* Obtain canIfRxPduCfg */
+List[CanIfRxPduCfg] CanIf_GetcanIfRxPduCfg(CanIf this):
+this.canIfInitCfg.canIfRxPduCfg
+;
+
+
+/* Obtain canIfTxPduCfg */
+List[CanIfTxPduCfg] CanIf_GetcanIfTxPduCfg(CanIf this):
+this.canIfInitCfg.canIfTxPduCfg
+;
+
+/* Obtain canIfPublicCfg */
+CanIfPublicCfg CanIf_GetcanIfPublicCfg(CanIf this):
+this.canIfPublicCfg
+;
+
+/* Obtain canIfPublicCfg */
+CanIfDispatchCfg CanIf_GetcanIfDispatchCfg(CanIf this):
+this.canIfDispatchCfg
+;
+
+/* Obtain canIfTrcvDrvCfg from canIfInitCfg */
+List[CanIfTrcvDrvCfg] CanIf_GetTrcvDrvCfg_From_InitCfg(CanIfInitCfg this):
+this.parent.canIfTrcvDrvCfg
+;
+
+/*Returns the model CanIf. */
+CanIf CanIf_getCanIfFromAnywhere(EObject this) :
+    ((Autosar)eRootContainer).ecu.canIf
+;
+
+/*This function returns TRUE if CanIfTrcvCfg is configured else FALSE*/
+Boolean CanIf_IsCanIfTrcvCfgConfigd(CanIf this):
+((this.canIfTrcvDrvCfg != null) && (this.canIfTrcvDrvCfg.size > 0))
+;
+
+/*Getter function for canIfInitHohCfg - context canIfInitCfg*/
+Boolean CanIf_getcanIfInitHohCfg_at_canIfInitCfg(CanIf this):
+this.canIfInitCfg.canIfInitHohCfg != null && this.canIfInitCfg.canIfInitHohCfg.size > 0
+;
+
+/*Getter function for canIfHrhCfg - context canIfInitCfg*/
+Boolean CanIf_getcanIfHrhCfg_at_canIfInitCfg(CanIfInitCfg this):
+this.canIfInitHohCfg.size > 0 && this.canIfInitHohCfg.get(0).canIfHrhCfg.size > 0
+;
+
+/*This function returns the number of config sets configured in CanIf*/
+Integer CanIf_WhichVariant(CanIf this):
+1
+;
+
+/*This function returns the number of config sets configured in CanIf*/
+Integer CanIf_NumPBVariants(CanIf this):
+this.CanIf_getVariants().size
+;
+/* Function to add all elements of the list */
+private Integer addsum(Integer e, List[Integer] newlist):
+let x = e + newlist.last() + 1:
+    newlist.add(x)
+;
+
+/*This function returns the txbufffer size */
+Integer CanIf_txbuffersize(CanIf this, Integer Int):
+let CanIfTxBuffering = this.canIfPublicCfg.canIfPublicTxBuffering:
+//let CalibrationSupport = this.canIfPublicCfg.canIfCalibrationSupport != null && this.canIfPublicCfg.canIfCalibrationSupport.canIfCalibration:
+let BasicFdTxPdu = CanControllerBaudrateConfig.getProperty("canControllerFdBaudrateConfig") != null? this.canIfInitCfg.canIfTxPduCfg.canIfTxPduBufferRef.canIfBufferHthRef.select(e|e.canIfHthIdSymRef.canHandleType == "BASIC").canIfHthCanCtrlIdRef.select(e|e.canIfCtrlCanCtrlRef.canControllerBaudrateConfig.select(e|e.canControllerFdBaudrateConfig != null).size > 0).size : 0:
+let BasicNonFdTxPdu = CanControllerBaudrateConfig.getProperty("canControllerFdBaudrateConfig") != null? this.canIfInitCfg.canIfTxPduCfg.canIfTxPduBufferRef.canIfBufferHthRef.select(e|e.canIfHthIdSymRef.canHandleType == "BASIC").canIfHthCanCtrlIdRef.select(e|e.canIfCtrlCanCtrlRef.canControllerBaudrateConfig.select(e|e.canControllerFdBaudrateConfig != null).size == 0).size : this.canIfInitCfg.canIfTxPduCfg.canIfTxPduBufferRef.canIfBufferHthRef.select(e|e.canIfHthIdSymRef.canHandleType == "BASIC").size:
+let BasicTxPduDlcList = 5:
+let newlist = {0}:
+let sumOfDlc = 10:
+CanIfTxBuffering ? newlist.last() : 0
+;
+
+Integer CanIf_getBufferSize(CanIfBufferCfg this) :
+(this.parent.canIfTxPduCfg.select(e|e.canIfTxPduBufferRef == this).canIfTxPduRef.pduLength.sortBy(e|e).last())*(this.canIfBufferSize)
+
+;
+
+
+List CanIf_getUsers(CanIfInitCfg this):
+let CanIfTxUsers = (this.canIfTxPduCfg != null && this.canIfTxPduCfg.size > 0) ? this.canIfTxPduCfg.canIfTxPduUserTxConfirmationUL : {""} :
+let CanIfRxUsers = this.canIfRxPduCfg.canIfRxPduUserRxIndicationUL:
+let CanIfUsers = CanIfTxUsers.addAll(CanIfRxUsers).toSet().flatten().toString().replaceFirst("null","USER"):
+CanIfUsers
+;
+/*This function returns the index of the config set in CanIfInitCfg*/
+Integer CanIf_GetIndexofCfgSet(CanIf this, String CurVariant):
+let AllUniqueVariants = this.CanIf_getVariantsUniqueOrCommon():
+AllUniqueVariants.indexOf(CurVariant)
+;
+
+
+
+/*Returns the list of Controllers which belong to the given config set*/
+List[CanIfCtrlCfg] CanIf_GetCtrlsinCfgSet(CanIfInitCfg this):
+if((this.parent.CanIf_WhichVariant() > 1) && (CanIf_IsModulePresentInDataModel(this.parent.parent, "EcuC")) && (this.parent.parent.ecuC.getChildByName("EcucPostBuildVariants") != null)) then
+(this.parent.canIfCtrlDrvCfg.get(0).canIfCtrlCfg) else
+(this.parent.canIfCtrlDrvCfg.get(0).canIfCtrlCfg.select(e|((Autosar)this.parent.parent).can.canConfigSet.get(0).canController.contains(e.canIfCtrlCanCtrlRef)))
+;
+
+
+/*This function returns the list of Tx-Pdus having unique TxPduId.
+Tx-Pdus having same CanIfTxPduRef have same TxPduId (irrespective of the configset)*/
+List[CanIfTxPduCfg] CanIf_GetUniqListOfTxPduRefs(CanIf this):
+let UniqTxRefList = {}:
+let TxPduList = this.canIfInitCfg.canIfTxPduCfg:
+let TxPduList_WithUniqTxId = this.canIfInitCfg.canIfTxPduCfg.canIfTxPduId.toSet():
+TxPduList_WithUniqTxId.forAll(e|UniqTxRefList.add(TxPduList.selectFirst(e1|e1.canIfTxPduId == e))->true)->
+UniqTxRefList
+;
+
+
+boolean CanIf_CubecCompatabalityCheckEnabled (CanIfPrivateCfg this):
+    true
+;
+
+
+Boolean CanIf_IsModulePresentInDataModel(Autosar this, String moduleName):
+    CanIf_IsModulePresentInList(this.getAllModules().toList(), moduleName)
+;
+
+Boolean CanIf_IsModulePresentInList(List[EObject] list, String moduleName):
+    list.exists(e|e.shortName == moduleName)
+;
+
+/*Calibration variables can have configurable names.This function returns the prefix to be given for Calibration Parameters*/
+String getCalibPrefix(Can this):
+(this.canGeneral.canRbCalibrationSupport != null && this.canGeneral.canRbCalibrationSupport.canRbCalibrationNamePrefix != null) ? this.canGeneral.canRbCalibrationSupport.canRbCalibrationNamePrefix : ""
+;
+
+/*Calibration variables can have configurable names.This function returns the Suffix to be given for Calibration Parameters*/
+String getCalibSuffix(Can this):
+(this.canGeneral.canRbCalibrationSupport != null && this.canGeneral.canRbCalibrationSupport.canRbCalibrationNameSuffix != null) ? this.canGeneral.canRbCalibrationSupport.canRbCalibrationNameSuffix : ""
+;
+
+
+
+
+/* Function to return CanIf software version information */
+String getCanIfSwVersionInfo(String this):
+ let CanIfGenVer = (GLOBALVAR gen_ver).toString() :
+ let CanIfSwVer  = CanIfGenVer.replaceAll("CanIf / AR","").split("\\.") :
+ if ((CanIfGenVer != null) && (CanIfGenVer.contains("CanIf / AR")) && (CanIfSwVer.size == 4)) then
+  switch(this)
+  {
+    case "CANIF_SW_MAJOR_VERSION" : CanIfSwVer.get(1)
+    case "CANIF_SW_MINOR_VERSION" : CanIfSwVer.get(2)
+    case "CANIF_SW_PATCH_VERSION" : CanIfSwVer.get(3)
+    case "CANIF_SW_VERSION"       : CanIfSwVer.get(1) + "." + CanIfSwVer.get(2) + "." + CanIfSwVer.get(3)
+    default                     : throwError("[CANIF] Not expected case.")
+  }
+ else
+  throwError("[CANIF] 'gen_ver' in CanIf workflow properties not updated in proper format")
+;
+
+List[CanIfBufferCfg] CanIf_getCanIfTxBuffer(EObject this):
+    ((Autosar)eRootContainer).canIf.canIfInitCfg.canIfBufferCfg.select(e|e != null)
+;
+List[CanIfTxPduCfg] CanIf_getCanIfTxPdu(EObject this):
+    ((Autosar)eRootContainer).canIf.canIfInitCfg.canIfTxPduCfg.select(e|e != null)
+;    
+List[CanIfBufferCfg] CanIf_getCanIfTxBufferLinkedToController(CanIfHthCfg this):
+((Autosar)eRootContainer).canIf.canIfInitCfg.canIfBufferCfg.select(e|e.canIfBufferHthRef.shortName == this.shortName)
+;
+List[CanIfHthCfg] CanIf_getHth(CanIfCtrlCfg this) :
+((Autosar)eRootContainer).canIf.canIfInitCfg.canIfInitHohCfg.canIfHthCfg.select(e|e.canIfHthCanCtrlIdRef.shortName == this.shortName)
+;
+List[CanIfBufferCfg] CanIf_getBuffer(CanIfCtrlCfg this) :
+((Autosar)eRootContainer).canIf.canIfInitCfg.canIfBufferCfg.select(e|e.canIfBufferHthRef.canIfHthCanCtrlIdRef.shortName == this.shortName)
+;
+List[CanIfTxPduCfg] CanIf_getTxPdus(CanIfCtrlCfg this) :
+((Autosar)eRootContainer).canIf.canIfInitCfg.canIfTxPduCfg.select(e|e.canIfTxPduBufferRef.canIfBufferHthRef.canIfHthCanCtrlIdRef.shortName == this.shortName)
+;
+
+boolean CanIf_IsPnCtrl(CanIfCtrlCfg this):
+let list = this.CanIf_getTxPdus().select(e|(e.canIfTxPduPnFilterPdu!= null) && (e.canIfTxPduPnFilterPdu == true)) :
+list.size > 0 ? true : false
+;
+
+boolean CanIf_IsFixedBuffer(CanIfBufferCfg this) :
+
+this.parent.parent.CanIf_getCurrentVariant()->
+(this.parent.canIfTxPduCfg.select(e|e.canIfTxPduBufferRef.shortName ==
+ this.shortName).canIfTxPduRef.select(e|e.pduLength>=8).size == 0) ? true : false 
+;
+Integer CanIf_getBufferMaxLength(CanIfBufferCfg this) :
+this.parent.parent.CanIf_getCurrentVariant()->
+this.parent.canIfTxPduCfg.select(e|e.canIfTxPduBufferRef == this).canIfTxPduRef.pduLength.sortBy(e|e).last()
+
+;
+
+
+/*Get CDD ULname*/
+String CanIf_GetConfiguredUserTxConfirmationName(String string):
+
+ if(string != null) then 
+ "&" + string
+ else    
+ "NULL_PTR"
+;
+
+List CanIf_getEmptyList():
+let list = {}:
+list
+;
+/*Get ULName for this pdu*/
+
+String CanIf_GetUserTxConfirmationName(CanIfTxPduCfg this):
+    switch(this.canIfTxPduUserTxConfirmationUL)
+    {
+        case "CAN_NM"    :  "&CanNm_TxConfirmation"
+        case "CAN_TP"    :  "&CanTp_TxConfirmation"
+        case "CAN_TSYN"  :  "&CanTSyn_TxConfirmation"
+        case "CDD"       :  CanIf_GetConfiguredUserTxConfirmationName(this.canIfTxPduUserTxConfirmationName)
+        case "J1939NM"   :  "&J1939Nm_TxConfirmation"
+        case "J1939TP"   :  "&J1939Tp_TxConfirmation"
+        case "PDUR"      :  "&PduR_CanIfTxConfirmation"
+        case "XCP"       :  "&Xcp_CanIfTxConfirmation"
+        case ""          :   CanIf_GetConfiguredUserTxConfirmationName(this.canIfTxPduUserTxConfirmationName)                         
+        case null        :   CanIf_GetConfiguredUserTxConfirmationName(this.canIfTxPduUserTxConfirmationName)                          
+        default          :  "NULL_PTR"
+    }
+;
+
+/*Get UserTriggerTransmitName based on TxPduId and configured UL*/
+/*CanTp also supports trigger transmit as per Bosch specific requirement*/
+String CanIf_GetUserTriggerTransmitName(CanIfTxPduCfg this):
+    switch(this.canIfTxPduUserTxConfirmationUL)
+    {
+
+        case "PDUR"      :  "&PduR_CanIfTriggerTransmit"      
+        case "CDD"       :  CanIf_GetConfiguredUserTxConfirmationName(this.canIfTxPduUserTriggerTransmitName)
+        case "CAN_TP"    :  "&CanTp_TriggerTransmit"                
+        default          :  "NULL_PTR"
+    }
+;
+
+/*************************************************************************************/
+/*************************************************************************************/
+/* List of Receive Pdus */
+private List[CanIfRxPduCfg]  CanIf_canIfRxPdus(CanIfInitCfg this) :
+    this.canIfRxPduCfg
+;
+
+/* Check for Rx Pdu reference is configured in CanNm */
+boolean CanNm_Aspect_isRXPduPresentinCanNM(CanIfRxPduCfg this):
+let cannm = ((Ecu)(this.parent.parent.parent)).canNm:
+(cannm==null)
+     ?false
+     :(cannm.canNmGlobalConfig.canNmChannelConfig.canNmRxPdu.canNmRxPduRef.shortName.exists(e|e == canIfRxPduRef.shortName))
+;
+
+/* Check for Tx Pdu reference is configured in CanNm */
+boolean CanNm_Aspect_isTXPduPresentinCanNM(CanIfTxPduCfg this):
+let cannm = ((Ecu)(this.parent.parent.parent)).canNm:
+((cannm==null) && (cannm.canNmGlobalConfig.canNmChannelConfig.canNmTxPdu == null))
+     ?false
+     :(cannm.canNmGlobalConfig.canNmChannelConfig.select(e| e.canNmTxPdu != null).canNmTxPdu.canNmTxPduRef.shortName.exists(e|e == canIfTxPduRef.shortName))
+;
+
+/* Generate CanIf Tx Target PDU ID for the given CanIfTxPduCfg */
+Integer CanNm_Aspect_generateCanIfTxTrgtPduIdForCanNm(CanIfTxPduCfg this)    :
+    let cannm = ((Autosar)eRootContainer).ecu.canNm:
+    cannm.canNmGlobalConfig!=null && cannm.canNmGlobalConfig.canNmChannelConfig.size > 0?
+        cannm.canNmGlobalConfig.canNmChannelConfig.selectFirst(e| e.canNmTxPdu != null && e.canNmTxPdu.canNmTxPduRef != null
+    && e.canNmTxPdu.canNmTxPduRef == this.canIfTxPduRef).canNmTxPdu.canNmTxConfirmationPduId : this.canIfTxPduId
+;
+
+
+/* List of Receive Pdus on Hrh configuration */
+List[CanIfRxPduCfg] CanIf_canIfRxPdusOnHrhConfig(CanIfHrhCfg this) :
+    ((CanIfInitCfg)this.parent.parent).CanIf_canIfRxPdus()
+;
+List[CanIfHrhCfg] CanIf_canIfHrhConfigWithRangeSF(CanIfHrhCfg this) :
+    CanIf_sortByHrhIds(((CanIfInitHohCfg)this.parent).canIfHrhCfg.select(e|e.CanIf_iscanifHrhRangePresent()))
+;
+
+/* FC_VariationPoint_START */
+/*sort a list of Nm txpduId by canNmTxConfirmationPduId */
+List[CanIfTxPduCfg] CanIf_sortByNmPduId(List[CanIfTxPduCfg] this) :
+this.sortBy(e|e.CanNm_Aspect_generateCanIfTxTrgtPduIdForCanNm())
+;
+/* FC_VariationPoint_END */
+
+/* FC_VariationPoint_START */
+Integer CanIf_XCoreNumCores(CanIfRbXCore this) :
+    let maxSrcCores = this.canIfRbXCorePipe.sortBy(e|e.canIfRbXCorePipeSrcCore).last().canIfRbXCorePipeSrcCore :
+    let maxDestCores = this.canIfRbXCorePipe.sortBy(e|e.canIfRbXCorePipeDestCore).last().canIfRbXCorePipeDestCore :
+    if(maxSrcCores > maxDestCores) then (maxSrcCores + 1) else (maxDestCores + 1)
+;
+
+List[Integer] CanIf_ZeroToNList(Integer n) :
+    if(n == 0) then {0} else CanIf_ZeroToNList(n-1).add(n)
+;
+
+/*Validation to check that CanIfRbXCoreDestRecvId must be configured when CanIfRbXCorePipeProcessingMode is configured TASK*/
+boolean CANIF_XCORE_DESTRECVID_TASK_CHECK(CanIfRbXCorePipe this):
+((this.canIfRbXCorePipeProcessingMode.toString()=="TASK")&&(this.canIfRbXCoreDestRecvId == null))?false : true
+;
+
+/*Validation to check that CanIfRbXCoreDestRecvId is not configured when CanIfRbXCorePipeProcessingMode is configured POLLING*/
+boolean CANIF_XCORE_DESTRECVID_POLL_CHECK(CanIfRbXCorePipe this):
+((this.canIfRbXCorePipeProcessingMode.toString()=="POLLING")&&(this.canIfRbXCoreDestRecvId != null))?false : true
+;
+/*Function which provides if the respective Pdu is CanTp Pdu.*/
+boolean CanIF_isTXPduPresentinCanTp(CanIfTxPduCfg this):
+let cantp = ((Ecu)(this.parent.parent.parent)).canTp:
+let cantptxpdu = (cantp != null)? (cantp.canTpConfig.canTpChannel.canTpTxNSdu.size > 0 ?
+                                   cantp.canTpConfig.canTpChannel.canTpTxNSdu.canTpTxNPdu.canTpTxNPduRef.shortName : {}) : {} :
+let cantprxpdu = (cantp != null)? (cantp.canTpConfig.canTpChannel.canTpRxNSdu.size > 0 ?
+                                   (cantp.canTpConfig.canTpChannel.canTpRxNSdu.exists(e|e.canTpTxFcNPdu != null)?
+                                   cantp.canTpConfig.canTpChannel.canTpRxNSdu.select(e|e.canTpTxFcNPdu != null).canTpTxFcNPdu.canTpTxFcNPduRef.shortName : {}) :{}): {} :
+
+(cantprxpdu.size > 0 || cantptxpdu.size > 0) ?
+cantprxpdu.addAll(cantptxpdu).select(e|e !=null).exists(e|e.compareTo(canIfTxPduRef.shortName) == 0) : false
+;
+
+/*Function to access CanTp Target Id */
+Integer CanIf_genTargetIdForCanTp(CanIfTxPduCfg this):
+    let cantp = ((Autosar)eRootContainer).ecu.canTp:
+    (cantp==null)
+    ? ""
+    :(getTxTrgtIdFromCantp(cantp,this))
+;
+
+/* This method checks the Metadatalength of the given TxPdu >= CanId size
+ * Returns true if canIfMetaDataSupport is False.
+ * Returns true if Metadatalength >= CanId size
+ * Returns false if Metadatalength < CanId size
+ */
+boolean CanIf_IsMetaDataHoldsEntireCanId(CanIfTxPduCfg this):    
+    let getCanIf = ((Autosar)this.eRootContainer).ecu.canIf:
+    
+    getCanIf.canIfPublicCfg.canIfMetaDataSupport ? (
+        if( this.canIfTxPduCanIdType == "STANDARD_CAN" || this.canIfTxPduCanIdType == "STANDARD_FD_CAN" ) then
+        (
+            (this.canIfTxPduRef.metaDataLength >= 2)?true:false            
+        )
+        else
+        (
+            (this.canIfTxPduRef.metaDataLength >= 4)?true:false
+        )
+    ):false
+;
+
+/* List of TxPdus for CanId calibration parameters generation  */
+List[CanIfTxPduCfg] CanIf_getCalibCanIdTxPduList(CanIf this):    
+    let txPduList = this.canIfInitCfg.canIfTxPduCfg:
+    let CalibCanIdTxPduList = {}:
+    
+    (txPduList.size > 0)? (
+        CalibCanIdTxPduList.addAll( txPduList.select( e | e.canIfTxPduType == "STATIC" && e.canIfTxPduCanId != null && e.CanIf_IsMetaDataHoldsEntireCanId() != true ))->
+        CalibCanIdTxPduList
+    ): {}                                                 
+;
+
+/* FC_VariationPoint_END */
